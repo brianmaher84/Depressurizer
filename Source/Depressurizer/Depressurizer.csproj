@@ -730,6 +730,12 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Depressurizer.Core\Depressurizer.Core.csproj">
+      <Project>{626ee111-c59d-4fd8-8abb-8ea373cd0256}</Project>
+      <Name>Depressurizer.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
