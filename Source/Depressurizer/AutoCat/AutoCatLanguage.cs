@@ -1,262 +1,309 @@
-﻿/*
-    This file is part of Depressurizer.
-    Original work Copyright 2011, 2012, 2013 Steve Labbe.
-    Modified work Copyright 2017 Theodoros Dimos.
+﻿#region License
 
-    Depressurizer is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+//     This file (AutoCatLanguage.cs) is part of Depressurizer.
+//     Copyright (C) 2018  Martijn Vegter
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    Depressurizer is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+#endregion
 
-    You should have received a copy of the GNU General Public License
-    along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#region
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using System.Xml.Serialization;
+using Depressurizer.Core.Models;
 using Rallion;
+
+#endregion
 
 namespace Depressurizer
 {
-    public class AutoCatLanguage : AutoCat
-    {
-        public override AutoCatType AutoCatType => AutoCatType.Language;
+	public class AutoCatLanguage : AutoCat
+	{
+		#region Constants
 
-        // AutoCat configuration
-        public string Prefix { get; set; }
+		// Serialization constants
+		public const string TypeIdString = "AutoCatLanguage";
+		private const string XmlNameFilter = "Filter";
+		private const string XmlNameFullAudioList = "FullAudio";
+		private const string XmlNameIncludeTypePrefix = "IncludeTypePrefix";
+		private const string XmlNameInterfaceList = "Interface";
+		private const string XmlNameLanguage = "Langauge";
 
-        public bool IncludeTypePrefix { get; set; }
+		private const string XmlNameName = "Name";
+		private const string XmlNamePrefix = "Prefix";
+		private const string XmlNameSubtitlesList = "Subtitles";
+		private const string XmlNameTypeFallback = "TypeFallback";
 
-        public bool TypeFallback { get; set; }
+		#endregion
 
-        public LanguageSupport IncludedLanguages;
+		#region Fields
 
-        // Serialization constants
-        public const string TypeIdString = "AutoCatLanguage";
+		public LanguageSupport IncludedLanguages;
 
-        private const string XmlNameName = "Name";
-        private const string XmlNameFilter = "Filter";
-        private const string XmlNamePrefix = "Prefix";
-        private const string XmlNameIncludeTypePrefix = "IncludeTypePrefix";
-        private const string XmlNameTypeFallback = "TypeFallback";
-        private const string XmlNameInterfaceList = "Interface";
-        private const string XmlNameSubtitlesList = "Subtitles";
-        private const string XmlNameFullAudioList = "FullAudio";
-        private const string XmlNameLanguage = "Langauge";
+		#endregion
 
-        public AutoCatLanguage(string name, string filter = null, string prefix = null, bool includeTypePrefix = false, bool typeFallback = false, List<string> interfaceLanguage = null,
-            List<string> subtitles = null, List<string> fullAudio = null, bool selected = false) : base(name)
-        {
-            Filter = filter;
-            Prefix = prefix;
-            IncludeTypePrefix = includeTypePrefix;
-            TypeFallback = typeFallback;
+		#region Constructors and Destructors
 
-            IncludedLanguages.Interface = interfaceLanguage ?? new List<string>();
-            IncludedLanguages.Subtitles = subtitles ?? new List<string>();
-            IncludedLanguages.FullAudio = fullAudio ?? new List<string>();
-            Selected = selected;
-        }
+		public AutoCatLanguage(string name, string filter = null, string prefix = null, bool includeTypePrefix = false, bool typeFallback = false, List<string> interfaceLanguage = null, List<string> subtitles = null, List<string> fullAudio = null, bool selected = false) : base(name)
+		{
+			Filter = filter;
+			Prefix = prefix;
+			IncludeTypePrefix = includeTypePrefix;
+			TypeFallback = typeFallback;
 
-        //XmlSerializer requires a parameterless constructor
-        private AutoCatLanguage() { }
+			if (interfaceLanguage != null)
+			{
+				IncludedLanguages.Interface.Clear();
+				IncludedLanguages.Interface.AddRange(interfaceLanguage);
+			}
 
-        protected AutoCatLanguage(AutoCatLanguage other) : base(other)
-        {
-            Filter = other.Filter;
-            Prefix = other.Prefix;
-            IncludeTypePrefix = other.IncludeTypePrefix;
-            TypeFallback = other.TypeFallback;
-            IncludedLanguages = other.IncludedLanguages;
-            Selected = other.Selected;
-        }
+			if (subtitles != null)
+			{
+				IncludedLanguages.Subtitles.Clear();
+				IncludedLanguages.Subtitles.AddRange(subtitles);
+			}
 
-        public override AutoCat Clone() => new AutoCatLanguage(this);
+			if (fullAudio != null)
+			{
+				IncludedLanguages.FullAudio.Clear();
+				IncludedLanguages.FullAudio.AddRange(fullAudio);
+			}
 
-        public override AutoCatResult CategorizeGame(GameInfo game, Filter filter)
-        {
-            if (games == null)
-            {
-                Program.Logger.Write(LoggerLevel.Error, GlobalStrings.Log_AutoCat_GamelistNull);
-                throw new ApplicationException(GlobalStrings.AutoCatGenre_Exception_NoGameList);
-            }
+			Selected = selected;
+		}
 
-            if (db == null)
-            {
-                Program.Logger.Write(LoggerLevel.Error, GlobalStrings.Log_AutoCat_DBNull);
-                throw new ApplicationException(GlobalStrings.AutoCatGenre_Exception_NoGameDB);
-            }
+		protected AutoCatLanguage(AutoCatLanguage other) : base(other)
+		{
+			Filter = other.Filter;
+			Prefix = other.Prefix;
+			IncludeTypePrefix = other.IncludeTypePrefix;
+			TypeFallback = other.TypeFallback;
+			IncludedLanguages = other.IncludedLanguages;
+			Selected = other.Selected;
+		}
 
-            if (game == null)
-            {
-                Program.Logger.Write(LoggerLevel.Error, GlobalStrings.Log_AutoCat_GameNull);
-                return AutoCatResult.Failure;
-            }
+		//XmlSerializer requires a parameterless constructor
+		private AutoCatLanguage() { }
 
-            if (!db.Contains(game.Id) || (db.Games[game.Id].LastStoreScrape == 0))
-            {
-                return AutoCatResult.NotInDatabase;
-            }
+		#endregion
 
-            if (!game.IncludeGame(filter))
-            {
-                return AutoCatResult.Filtered;
-            }
+		#region Public Properties
 
-            LanguageSupport Language = db.Games[game.Id].LanguageSupport;
+		public override AutoCatType AutoCatType => AutoCatType.Language;
 
-            Language.Interface = Language.Interface ?? new List<string>();
-            Language.Subtitles = Language.Subtitles ?? new List<string>();
-            Language.FullAudio = Language.FullAudio ?? new List<string>();
+		public bool IncludeTypePrefix { get; set; }
 
-            IEnumerable<string> interfaceLanguage = Language.Interface.Intersect(IncludedLanguages.Interface);
-            foreach (string catString in interfaceLanguage)
-            {
-                Category c = games.GetCategory(GetProcessedString(catString, "Interface"));
-                game.AddCategory(c);
-            }
+		// AutoCat configuration
+		public string Prefix { get; set; }
 
-            foreach (string catString in IncludedLanguages.Subtitles)
-            {
-                if (Language.Subtitles.Contains(catString) || Language.Subtitles.Count == 0 && Language.FullAudio.Contains(catString) || Language.FullAudio.Count == 0 && Language.Interface.Contains(catString))
-                    game.AddCategory(games.GetCategory(GetProcessedString(catString, "Subtitles")));
-            }
+		public bool TypeFallback { get; set; }
 
-            foreach (string catString in IncludedLanguages.FullAudio)
-            {
-                if (Language.FullAudio.Contains(catString) || Language.FullAudio.Count == 0 && Language.Subtitles.Contains(catString) || Language.Subtitles.Count == 0 && Language.Interface.Contains(catString))
-                    game.AddCategory(games.GetCategory(GetProcessedString(catString, "Full Audio")));
-            }
+		#endregion
 
-            return AutoCatResult.Success;
-        }
+		#region Public Methods and Operators
 
-        private string GetProcessedString(string baseString, string type="")
-        {
-            string result = baseString;
+		public static AutoCatLanguage LoadFromXmlElement(XmlElement xElement)
+		{
+			string name = XmlUtil.GetStringFromNode(xElement[XmlNameName], TypeIdString);
+			string filter = XmlUtil.GetStringFromNode(xElement[XmlNameFilter], null);
+			string prefix = XmlUtil.GetStringFromNode(xElement[XmlNamePrefix], null);
+			bool includeTypePrefix = XmlUtil.GetBoolFromNode(xElement[XmlNameIncludeTypePrefix], false);
+			bool typeFallback = XmlUtil.GetBoolFromNode(xElement[XmlNameTypeFallback], false);
+			List<string> interfaceList = new List<string>();
+			List<string> subtitlesList = new List<string>();
+			List<string> fullAudioList = new List<string>();
 
-            if (IncludeTypePrefix && !string.IsNullOrEmpty(type))
-            {
-                result = "(" + type + ") " + result;
-            }
+			XmlElement interfaceLanguage = xElement[XmlNameInterfaceList];
+			XmlElement subtitles = xElement[XmlNameSubtitlesList];
+			XmlElement fullAudio = xElement[XmlNameFullAudioList];
 
-            if (!string.IsNullOrEmpty(Prefix))
-            {
-                result = Prefix + result;
-            }
+			XmlNodeList interfaceElements = interfaceLanguage?.SelectNodes(XmlNameLanguage);
+			if (interfaceElements != null)
+			{
+				for (int i = 0; i < interfaceElements.Count; i++)
+				{
+					XmlNode n = interfaceElements[i];
+					if (XmlUtil.TryGetStringFromNode(n, out string language))
+					{
+						interfaceList.Add(language);
+					}
+				}
+			}
 
-            return result;
-        }
+			XmlNodeList subtitlesElements = subtitles?.SelectNodes(XmlNameLanguage);
+			if (subtitlesElements != null)
+			{
+				for (int i = 0; i < subtitlesElements.Count; i++)
+				{
+					XmlNode n = subtitlesElements[i];
+					if (XmlUtil.TryGetStringFromNode(n, out string language))
+					{
+						subtitlesList.Add(language);
+					}
+				}
+			}
 
-        public override void WriteToXml(XmlWriter writer)
-        {
-            writer.WriteStartElement(TypeIdString);
+			XmlNodeList fullAudioElements = fullAudio?.SelectNodes(XmlNameLanguage);
+			if (fullAudioElements != null)
+			{
+				for (int i = 0; i < fullAudioElements.Count; i++)
+				{
+					XmlNode n = fullAudioElements[i];
+					if (XmlUtil.TryGetStringFromNode(n, out string language))
+					{
+						fullAudioList.Add(language);
+					}
+				}
+			}
 
-            writer.WriteElementString(XmlNameName, Name);
-            if (Filter != null)
-            {
-                writer.WriteElementString(XmlNameFilter, Filter);
-            }
-            if (Prefix != null)
-            {
-                writer.WriteElementString(XmlNamePrefix, Prefix);
-            }
+			return new AutoCatLanguage(name, filter, prefix, includeTypePrefix, typeFallback, interfaceList, subtitlesList, fullAudioList);
+		}
 
-            writer.WriteElementString(XmlNameIncludeTypePrefix, IncludeTypePrefix.ToString().ToLowerInvariant());
-            writer.WriteElementString(XmlNameTypeFallback, TypeFallback.ToString().ToLowerInvariant());
+		public override AutoCatResult CategorizeGame(GameInfo game, Filter filter)
+		{
+			if (games == null)
+			{
+				Program.Logger.Write(LoggerLevel.Error, GlobalStrings.Log_AutoCat_GamelistNull);
+				throw new ApplicationException(GlobalStrings.AutoCatGenre_Exception_NoGameList);
+			}
 
-            writer.WriteStartElement(XmlNameInterfaceList);
+			if (db == null)
+			{
+				Program.Logger.Write(LoggerLevel.Error, GlobalStrings.Log_AutoCat_DBNull);
+				throw new ApplicationException(GlobalStrings.AutoCatGenre_Exception_NoGameDB);
+			}
 
-            foreach (string s in IncludedLanguages.Interface)
-            {
-                writer.WriteElementString(XmlNameLanguage, s);
-            }
+			if (game == null)
+			{
+				Program.Logger.Write(LoggerLevel.Error, GlobalStrings.Log_AutoCat_GameNull);
+				return AutoCatResult.Failure;
+			}
 
-            writer.WriteEndElement(); // Interface Language list
+			if (!db.Contains(game.Id) || db.Games[game.Id].LastStoreScrape == 0)
+			{
+				return AutoCatResult.NotInDatabase;
+			}
 
-            writer.WriteStartElement(XmlNameSubtitlesList);
+			if (!game.IncludeGame(filter))
+			{
+				return AutoCatResult.Filtered;
+			}
 
-            foreach (string s in IncludedLanguages.Subtitles)
-            {
-                writer.WriteElementString(XmlNameLanguage, s);
-            }
+			LanguageSupport languageSupport = db.Games[game.Id].LanguageSupport;
 
-            writer.WriteEndElement(); // Subtitles Language list
+			IEnumerable<string> interfaceLanguage = languageSupport.Interface.Intersect(IncludedLanguages.Interface);
+			foreach (string catString in interfaceLanguage)
+			{
+				Category c = games.GetCategory(GetProcessedString(catString, "Interface"));
+				game.AddCategory(c);
+			}
 
-            writer.WriteStartElement(XmlNameFullAudioList);
+			foreach (string catString in IncludedLanguages.Subtitles)
+			{
+				if (languageSupport.Subtitles.Contains(catString) || languageSupport.Subtitles.Count == 0 && languageSupport.FullAudio.Contains(catString) || languageSupport.FullAudio.Count == 0 && languageSupport.Interface.Contains(catString))
+				{
+					game.AddCategory(games.GetCategory(GetProcessedString(catString, "Subtitles")));
+				}
+			}
 
-            foreach (string s in IncludedLanguages.FullAudio)
-            {
-                writer.WriteElementString(XmlNameLanguage, s);
-            }
+			foreach (string catString in IncludedLanguages.FullAudio)
+			{
+				if (languageSupport.FullAudio.Contains(catString) || languageSupport.FullAudio.Count == 0 && languageSupport.Subtitles.Contains(catString) || languageSupport.Subtitles.Count == 0 && languageSupport.Interface.Contains(catString))
+				{
+					game.AddCategory(games.GetCategory(GetProcessedString(catString, "Full Audio")));
+				}
+			}
 
-            writer.WriteEndElement(); // Full Audio list
-            writer.WriteEndElement(); // type ID string
-        }
+			return AutoCatResult.Success;
+		}
 
-        public static AutoCatLanguage LoadFromXmlElement(XmlElement xElement)
-        {
-            string name = XmlUtil.GetStringFromNode(xElement[XmlNameName], TypeIdString);
-            string filter = XmlUtil.GetStringFromNode(xElement[XmlNameFilter], null);
-            string prefix = XmlUtil.GetStringFromNode(xElement[XmlNamePrefix], null);
-            bool includeTypePrefix = XmlUtil.GetBoolFromNode(xElement[XmlNameIncludeTypePrefix], false);
-            bool typeFallback = XmlUtil.GetBoolFromNode(xElement[XmlNameTypeFallback], false);
-            List<string> interfaceList = new List<string>();
-            List<string> subtitlesList = new List<string>();
-            List<string> fullAudioList = new List<string>();
+		public override AutoCat Clone()
+		{
+			return new AutoCatLanguage(this);
+		}
 
-            XmlElement interfaceLanguage = xElement[XmlNameInterfaceList];
-            XmlElement subtitles = xElement[XmlNameSubtitlesList];
-            XmlElement fullAudio = xElement[XmlNameFullAudioList];
+		public override void WriteToXml(XmlWriter writer)
+		{
+			writer.WriteStartElement(TypeIdString);
 
-            XmlNodeList interfaceElements = interfaceLanguage?.SelectNodes(XmlNameLanguage);
-            if (interfaceElements != null)
-            {
-                for (int i = 0; i < interfaceElements.Count; i++)
-                {
-                    XmlNode n = interfaceElements[i];
-                    if (XmlUtil.TryGetStringFromNode(n, out string language))
-                    {
-                        interfaceList.Add(language);
-                    }
-                }
-            }
+			writer.WriteElementString(XmlNameName, Name);
+			if (Filter != null)
+			{
+				writer.WriteElementString(XmlNameFilter, Filter);
+			}
 
-            XmlNodeList subtitlesElements = subtitles?.SelectNodes(XmlNameLanguage);
-            if (subtitlesElements != null)
-            {
-                for (int i = 0; i < subtitlesElements.Count; i++)
-                {
-                    XmlNode n = subtitlesElements[i];
-                    if (XmlUtil.TryGetStringFromNode(n, out string language))
-                    {
-                        subtitlesList.Add(language);
-                    }
-                }
-            }
+			if (Prefix != null)
+			{
+				writer.WriteElementString(XmlNamePrefix, Prefix);
+			}
 
-            XmlNodeList fullAudioElements = fullAudio?.SelectNodes(XmlNameLanguage);
-            if (fullAudioElements != null)
-            {
-                for (int i = 0; i < fullAudioElements.Count; i++)
-                {
-                    XmlNode n = fullAudioElements[i];
-                    if (XmlUtil.TryGetStringFromNode(n, out string language))
-                    {
-                        fullAudioList.Add(language);
-                    }
-                }
-            }
+			writer.WriteElementString(XmlNameIncludeTypePrefix, IncludeTypePrefix.ToString().ToLowerInvariant());
+			writer.WriteElementString(XmlNameTypeFallback, TypeFallback.ToString().ToLowerInvariant());
 
-            return new AutoCatLanguage(name, filter, prefix, includeTypePrefix, typeFallback, interfaceList, subtitlesList, fullAudioList);
-        }
-    }
+			writer.WriteStartElement(XmlNameInterfaceList);
+
+			foreach (string s in IncludedLanguages.Interface)
+			{
+				writer.WriteElementString(XmlNameLanguage, s);
+			}
+
+			writer.WriteEndElement(); // Interface Language list
+
+			writer.WriteStartElement(XmlNameSubtitlesList);
+
+			foreach (string s in IncludedLanguages.Subtitles)
+			{
+				writer.WriteElementString(XmlNameLanguage, s);
+			}
+
+			writer.WriteEndElement(); // Subtitles Language list
+
+			writer.WriteStartElement(XmlNameFullAudioList);
+
+			foreach (string s in IncludedLanguages.FullAudio)
+			{
+				writer.WriteElementString(XmlNameLanguage, s);
+			}
+
+			writer.WriteEndElement(); // Full Audio list
+			writer.WriteEndElement(); // type ID string
+		}
+
+		#endregion
+
+		#region Methods
+
+		private string GetProcessedString(string baseString, string type = "")
+		{
+			string result = baseString;
+
+			if (IncludeTypePrefix && !string.IsNullOrEmpty(type))
+			{
+				result = "(" + type + ") " + result;
+			}
+
+			if (!string.IsNullOrEmpty(Prefix))
+			{
+				result = Prefix + result;
+			}
+
+			return result;
+		}
+
+		#endregion
+	}
 }

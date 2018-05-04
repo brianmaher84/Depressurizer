@@ -153,8 +153,8 @@ namespace Depressurizer
 		public LanguageSupport CalculateAllLanguages()
 		{
 			SortedSet<string> Interface = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
-			SortedSet<string> Subtitles = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
-			SortedSet<string> FullAudio = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+			SortedSet<string> subtitles = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+			SortedSet<string> fullAudio = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			foreach (GameDBEntry entry in Games.Values)
 			{
@@ -165,18 +165,24 @@ namespace Depressurizer
 
 				if (entry.LanguageSupport.Subtitles != null)
 				{
-					Subtitles.UnionWith(entry.LanguageSupport.Subtitles);
+					subtitles.UnionWith(entry.LanguageSupport.Subtitles);
 				}
 
 				if (entry.LanguageSupport.FullAudio != null)
 				{
-					FullAudio.UnionWith(entry.LanguageSupport.FullAudio);
+					fullAudio.UnionWith(entry.LanguageSupport.FullAudio);
 				}
 			}
 
-			allLanguages.Interface = Interface.ToList();
-			allLanguages.Subtitles = Subtitles.ToList();
-			allLanguages.FullAudio = FullAudio.ToList();
+			allLanguages.Interface.Clear();
+			allLanguages.Interface.AddRange(Interface.ToList());
+
+			allLanguages.FullAudio.Clear();
+			allLanguages.FullAudio.AddRange(fullAudio.ToList());
+
+			allLanguages.Subtitles.Clear();
+			allLanguages.Subtitles.AddRange(subtitles.ToList());
+
 			return allLanguages;
 		}
 
@@ -1161,9 +1167,14 @@ namespace Depressurizer
 
 				foreach (XmlNode langNode in gameNode.SelectNodes(XmlName_Game_languageSupport))
 				{
-					g.LanguageSupport.Interface = XmlUtil.GetStringsFromNodeList(langNode.SelectNodes(XmlName_Game_languageSupport_Interface));
-					g.LanguageSupport.FullAudio = XmlUtil.GetStringsFromNodeList(langNode.SelectNodes(XmlName_Game_languageSupport_FullAudio));
-					g.LanguageSupport.Subtitles = XmlUtil.GetStringsFromNodeList(langNode.SelectNodes(XmlName_Game_languageSupport_Subtitles));
+					g.LanguageSupport.Interface.Clear();
+					g.LanguageSupport.Interface.AddRange(XmlUtil.GetStringsFromNodeList(langNode.SelectNodes(XmlName_Game_languageSupport_Interface)));
+
+					g.LanguageSupport.FullAudio.Clear();
+					g.LanguageSupport.FullAudio.AddRange(XmlUtil.GetStringsFromNodeList(langNode.SelectNodes(XmlName_Game_languageSupport_FullAudio)));
+
+					g.LanguageSupport.Subtitles.Clear();
+					g.LanguageSupport.Subtitles.AddRange(XmlUtil.GetStringsFromNodeList(langNode.SelectNodes(XmlName_Game_languageSupport_Subtitles)));
 				}
 
 				g.Developers = XmlUtil.GetStringsFromNodeList(gameNode.SelectNodes(XmlName_Game_Developer));

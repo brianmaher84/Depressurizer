@@ -118,7 +118,11 @@ namespace Depressurizer
 
 		public int Id;
 
-		public LanguageSupport LanguageSupport; //TODO: Add field to DB edit dialog
+		public LanguageSupport LanguageSupport
+		{
+			get => _languageSupport ?? (_languageSupport = new LanguageSupport());
+			set => _languageSupport = value;
+		}
 
 		[DefaultValue(0)] public int LastAppInfoUpdate;
 
@@ -147,6 +151,7 @@ namespace Depressurizer
 
 		[DefaultValue(0)] public int TotalAchievements;
 		private VRSupport _vrSupport;
+		private LanguageSupport _languageSupport;
 
 		#endregion
 
@@ -235,38 +240,41 @@ namespace Depressurizer
 				}
 
 				//VR Support
-				if (other.VRSupport.Headsets != null && other.VRSupport.Headsets.Count > 0)
+				if (other.VRSupport.Headsets.Count > 0)
 				{
 					VRSupport.Headsets.Clear();
 					VRSupport.Headsets.AddRange(other.VRSupport.Headsets);
 				}
 
-				if (other.VRSupport.Input != null && other.VRSupport.Input.Count > 0)
+				if (other.VRSupport.Input.Count > 0)
 				{
 					VRSupport.Input.Clear();
 					VRSupport.Input.AddRange(other.VRSupport.Input);
 				}
 
-				if (other.VRSupport.PlayArea != null && other.VRSupport.PlayArea.Count > 0)
+				if (other.VRSupport.PlayArea.Count > 0)
 				{
 					VRSupport.PlayArea.Clear();
 					VRSupport.PlayArea.AddRange(other.VRSupport.PlayArea);
 				}
 
-				//Language Support
-				if (other.LanguageSupport.FullAudio != null && other.LanguageSupport.FullAudio.Count > 0)
+				// Language Support
+				if (other.LanguageSupport.FullAudio.Count > 0)
 				{
-					LanguageSupport.FullAudio = other.LanguageSupport.FullAudio;
+					LanguageSupport.FullAudio.Clear();
+					LanguageSupport.FullAudio.AddRange(other.LanguageSupport.FullAudio);
 				}
 
-				if (other.LanguageSupport.Interface != null && other.LanguageSupport.Interface.Count > 0)
+				if (other.LanguageSupport.Interface.Count > 0)
 				{
-					LanguageSupport.Interface = other.LanguageSupport.Interface;
+					LanguageSupport.Interface.Clear();
+					LanguageSupport.Interface.AddRange(other.LanguageSupport.Interface);
 				}
 
-				if (other.LanguageSupport.Subtitles != null && other.LanguageSupport.Subtitles.Count > 0)
+				if (other.LanguageSupport.Subtitles.Count > 0)
 				{
-					LanguageSupport.Subtitles = other.LanguageSupport.Subtitles;
+					LanguageSupport.Subtitles.Clear();
+					LanguageSupport.Subtitles.AddRange(other.LanguageSupport.Subtitles);
 				}
 
 				if (other.ReviewTotal != 0)
@@ -410,29 +418,29 @@ namespace Depressurizer
 			if (matches.Count > 0)
 			{
 				LanguageSupport = new LanguageSupport();
-				LanguageSupport.Interface = new List<string>();
-				LanguageSupport.FullAudio = new List<string>();
-				LanguageSupport.Subtitles = new List<string>();
 
-				foreach (Match ma in matches)
+				foreach (Match match in matches)
 				{
-					string language = WebUtility.HtmlDecode(ma.Groups[1].Value.Trim());
+					string language = WebUtility.HtmlDecode(match.Groups[1].Value.Trim());
 					if (language.StartsWith("#lang") || language.StartsWith("("))
 					{
 						continue; //Some store pages on steam are bugged.
 					}
 
-					if (WebUtility.HtmlDecode(ma.Groups[2].Value.Trim()) != "") //Interface
+					// Interface
+					if (WebUtility.HtmlDecode(match.Groups[2].Value.Trim()) != "")
 					{
 						LanguageSupport.Interface.Add(language);
 					}
 
-					if (WebUtility.HtmlDecode(ma.Groups[3].Value.Trim()) != "") //Full Audio
+					// Full Audio
+					if (WebUtility.HtmlDecode(match.Groups[3].Value.Trim()) != "") 
 					{
 						LanguageSupport.FullAudio.Add(language);
 					}
 
-					if (WebUtility.HtmlDecode(ma.Groups[4].Value.Trim()) != "") //Subtitles
+					// Subtitles
+					if (WebUtility.HtmlDecode(match.Groups[4].Value.Trim()) != "")
 					{
 						LanguageSupport.Subtitles.Add(language);
 					}
