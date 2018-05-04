@@ -139,10 +139,6 @@ namespace Depressurizer.Core
 
 		#region Fields
 
-		public int SplitBrowserContainerWidth = 722;
-
-		public int SplitGameContainerHeight = 510;
-
 		private bool _autoSaveDatabase = true;
 
 		private bool _checkForUpdates = true;
@@ -173,9 +169,11 @@ namespace Depressurizer.Core
 
 		private bool _singleCatMode;
 		private int _splitBrowser;
+		private int _splitBrowserContainerWidth = 722;
 
 		private int _splitContainer;
 		private int _splitGame;
+		private int _splitGameContainerHeight = 510;
 
 		private StartupAction _startupAction = StartupAction.CreateProfile;
 
@@ -576,6 +574,25 @@ namespace Depressurizer.Core
 			}
 		}
 
+		public int SplitBrowserContainerWidth
+		{
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _splitBrowserContainerWidth;
+				}
+			}
+
+			set
+			{
+				lock (SyncRoot)
+				{
+					_splitBrowserContainerWidth = value;
+				}
+			}
+		}
+
 		public int SplitContainer
 		{
 			get
@@ -618,6 +635,25 @@ namespace Depressurizer.Core
 				lock (SyncRoot)
 				{
 					_splitGame = value;
+				}
+			}
+		}
+
+		public int SplitGameContainerHeight
+		{
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _splitGameContainerHeight;
+				}
+			}
+
+			set
+			{
+				lock (SyncRoot)
+				{
+					_splitGameContainerHeight = value;
 				}
 			}
 		}

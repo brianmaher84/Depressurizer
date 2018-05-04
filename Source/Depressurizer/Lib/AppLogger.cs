@@ -729,30 +729,29 @@ namespace Rallion
         {
             lock (threadLock)
             {
-                if (Level >= lev)
-                {
-                    if (AutoSessionStart && !IsActiveSession)
-                    {
-                        BeginSession();
-                    }
-                    if (IsActiveSession)
-                    {
-                        string t = DateTime.Now.ToString(DateFormat);
-                        string l = LevTxt[(int) lev];
-                        string m = string.Format(message, args);
-                        string fullMessage = string.Format("{0} - {1}: {2}{3}", t, l, m, Environment.NewLine);
-                        if (!CanWriteToFile(fullMessage))
-                        {
-                            BeginSession(true);
-                        }
+	  
 
-                        byte[] output = new UTF8Encoding().GetBytes(fullMessage);
-                        //byte[] output = fullMessage.ToCharArray();
-                        outputStream.Write(output, 0, output.Length);
-                        outputStream.Flush();
-                        CurrentFileRecords++;
-                    }
-                }
+	            if (AutoSessionStart && !IsActiveSession)
+	            {
+		            BeginSession();
+	            }
+	            if (IsActiveSession)
+	            {
+		            string t = DateTime.Now.ToString(DateFormat);
+		            string l = LevTxt[(int) lev];
+		            string m = string.Format(message, args);
+		            string fullMessage = string.Format("{0} - {1}: {2}{3}", t, l, m, Environment.NewLine);
+		            if (!CanWriteToFile(fullMessage))
+		            {
+			            BeginSession(true);
+		            }
+
+		            byte[] output = new UTF8Encoding().GetBytes(fullMessage);
+		            //byte[] output = fullMessage.ToCharArray();
+		            outputStream.Write(output, 0, output.Length);
+		            outputStream.Flush();
+		            CurrentFileRecords++;
+	            }
             }
         }
 

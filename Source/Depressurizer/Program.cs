@@ -60,7 +60,7 @@ namespace Depressurizer
 
 			Logger = new AppLogger
 			{
-				Level = LoggerLevel.None,
+				Level = LoggerLevel.Info,
 				DateFormat = "HH:mm:ss'.'ffffff",
 				MaxFileSize = 2000000,
 				MaxBackup = 1,
