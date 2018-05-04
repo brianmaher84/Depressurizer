@@ -132,9 +132,6 @@ namespace Depressurizer
 
 		private void OptionsForm_Load(object sender, EventArgs e)
 		{
-			string[] levels = Enum.GetNames(typeof(LoggerLevel));
-			cmbLogLevel.Items.AddRange(levels);
-
 			foreach (string language in Enum.GetNames(typeof(InterfaceLanguage)))
 			{
 				cmbUILanguage.Items.Add(language);

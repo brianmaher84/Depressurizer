@@ -23,6 +23,7 @@
 using System;
 using System.Windows.Forms;
 using Depressurizer.Core;
+using Depressurizer.Core.Helpers;
 using Rallion;
 
 #endregion
@@ -34,7 +35,7 @@ namespace Depressurizer
 		#region Static Fields
 
 		public static GameDB GameDB;
-		public static AppLogger Logger;
+		public static Logger Logger => Logger.Instance;
 
 		#endregion
 
@@ -58,18 +59,9 @@ namespace Depressurizer
 
 			FatalError.InitializeHandler();
 
-			Logger = new AppLogger
-			{
-				Level = LoggerLevel.Info,
-				DateFormat = "HH:mm:ss'.'ffffff",
-				MaxFileSize = 2000000,
-				MaxBackup = 1,
-				FileNameTemplate = "Depressurizer.log"
-			};
-
 			Settings.Load();
 
-			Logger.Write(LoggerLevel.Info, GlobalStrings.Program_ProgramInitialized, Logger.Level);
+			Logger.Info(GlobalStrings.Program_ProgramInitialized);
 
 			Application.Run(new FormMain());
 		}
@@ -78,8 +70,8 @@ namespace Depressurizer
 		{
 			Settings.Save();
 
-			Logger.Write(LoggerLevel.Info, GlobalStrings.Program_ProgramClosing);
-			Logger.EndSession();
+			Logger.Info(GlobalStrings.Program_ProgramClosing);
+			Logger.Dispose();
 		}
 
 		#endregion
