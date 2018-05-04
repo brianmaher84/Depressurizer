@@ -528,17 +528,17 @@ namespace Depressurizer
                 UpdateGameDBFromHltb();
             }
 
-            if (Settings.Instance.CheckForDepressurizerUpdates)
+            if (Settings.Instance.CheckForUpdates)
             {
                 CheckForDepressurizerUpdates();
             }
 
             switch (Settings.Instance.StartupAction)
             {
-                case StartupAction.Load:
+                case StartupAction.LoadProfile:
                     LoadProfile(Settings.Instance.ProfileToLoad, false);
                     break;
-                case StartupAction.Create:
+                case StartupAction.CreateProfile:
                     CreateProfile();
                     break;
                 default:
@@ -546,7 +546,7 @@ namespace Depressurizer
                     break;
             }
 
-            Program.GameDB.ChangeLanguage(settings.StoreLang);
+            Program.GameDB.ChangeLanguage(settings.StoreLanguage);
 
             UpdateUIForSingleCat();
             UpdateEnabledStatesForGames();
@@ -617,7 +617,7 @@ namespace Depressurizer
         }
 
         /// <summary>
-        /// Updates the database using AppInfo cache. Displays an error message on failure. Saves the DB afterwards if AutosaveDB is set.
+        /// Updates the database using AppInfo cache. Displays an error message on failure. Saves the DB afterwards if AutoSaveDatabase is set.
         /// </summary>
         private void UpdateGameDBFromAppInfo()
         {
@@ -626,7 +626,7 @@ namespace Depressurizer
                 int num = Program.GameDB.UpdateFromAppInfo(
                     string.Format(Properties.Resources.AppInfoPath, Settings.Instance.SteamPath));
                 AddStatus(string.Format(GlobalStrings.MainForm_Status_AppInfoAutoupdate, num));
-                if (num > 0 && Settings.Instance.AutosaveDB)
+                if (num > 0 && Settings.Instance.AutoSaveDatabase)
                 {
                     SaveGameDB();
                 }
@@ -640,7 +640,7 @@ namespace Depressurizer
         }
 
         /// <summary>
-        /// Updates the database using data from howlongtobeatsteam.com. Displays an error message on failure. Saves the DB afterwards if AutosaveDB is set.
+        /// Updates the database using data from howlongtobeatsteam.com. Displays an error message on failure. Saves the DB afterwards if AutoSaveDatabase is set.
         /// </summary>
         private void UpdateGameDBFromHltb()
         {
@@ -665,7 +665,7 @@ namespace Depressurizer
                 else
                 {
                     AddStatus(string.Format(GlobalStrings.MainForm_Status_HltbAutoupdate, dlg.Updated));
-                    if (dlg.Updated > 0 && Settings.Instance.AutosaveDB)
+                    if (dlg.Updated > 0 && Settings.Instance.AutoSaveDatabase)
                     {
                         SaveGameDB();
                     }
@@ -703,7 +703,7 @@ namespace Depressurizer
                 }
                 if (dlg.SetStartup)
                 {
-                    Settings.Instance.StartupAction = StartupAction.Load;
+                    Settings.Instance.StartupAction = StartupAction.LoadProfile;
                     Settings.Instance.ProfileToLoad = CurrentProfile.FilePath;
                     Settings.Instance.Save();
                 }
@@ -741,7 +741,7 @@ namespace Depressurizer
                     }
                     if (dlg.SetStartup)
                     {
-                        Settings.Instance.StartupAction = StartupAction.Load;
+                        Settings.Instance.StartupAction = StartupAction.LoadProfile;
                         Settings.Instance.ProfileToLoad = CurrentProfile.FilePath;
                         Settings.Instance.Save();
                     }
@@ -1641,7 +1641,7 @@ namespace Depressurizer
                     {
                         AddStatus(string.Format(GlobalStrings.MainForm_UpdatedDatabaseEntries,
                             scrapeDlg.JobsCompleted));
-                        if (scrapeDlg.JobsCompleted > 0 && Settings.Instance.AutosaveDB)
+                        if (scrapeDlg.JobsCompleted > 0 && Settings.Instance.AutoSaveDatabase)
                         {
                             SaveGameDB();
                         }
@@ -1806,12 +1806,12 @@ namespace Depressurizer
 
         private void SelectCategory(Settings settings)
         {
-            if (settings.Category != string.Empty)
+            if (settings.SelectedCategory != string.Empty)
             {
                 lstCategories.SelectedIndices.Clear();
                 for (int i = 0; i < lstCategories.Items.Count; i++)
                 {
-                    if (lstCategories.Items[i].Name == settings.Category)
+                    if (lstCategories.Items[i].Name == settings.SelectedCategory)
                     {
                         lstCategories.SelectedIndices.Add(i);
                         break;
@@ -1822,12 +1822,12 @@ namespace Depressurizer
 
         private void SelectFilter(Settings settings)
         {
-            if (settings.Filter != string.Empty)
+            if (settings.SelectedFilter != string.Empty)
             {
                 for (int i = 0; i < cboFilter.Items.Count; i++)
                 {
                     string name = cboFilter.GetItemText(cboFilter.Items[i]);
-                    if (name == settings.Filter)
+                    if (name == settings.SelectedFilter)
                     {
                         mchkAdvancedCategories.Checked = true;
                         cboFilter.SelectedIndex = i;
@@ -1840,9 +1840,9 @@ namespace Depressurizer
 
         private void SelectAutoCats(Settings settings)
         {
-            if (settings.AutoCats != null)
+            if (settings.SelectedAutoCats != null)
             {
-                List<string> autocats = settings.AutoCats.Split(',').ToList();
+                List<string> autocats = settings.SelectedAutoCats.Split(',').ToList();
                 foreach (string ac in autocats)
                 {
                     for (int i = 0; i < lvAutoCatType.Items.Count; i++)
@@ -1862,7 +1862,7 @@ namespace Depressurizer
                 if (autocats == string.Empty) autocats += lvAutoCatType.CheckedItems[i].Name;
                 else autocats += "," + lvAutoCatType.CheckedItems[i].Name;
             }
-            settings.AutoCats = autocats;
+            settings.SelectedAutoCats = autocats;
         }
 
         /// <summary>
@@ -2415,9 +2415,9 @@ namespace Depressurizer
             settings.SplitGame = splitGame.SplitterDistance;
             settings.SplitBrowser = splitBrowser.SplitterDistance;
 
-            settings.Filter = AdvancedCategoryFilter ? cboFilter.Text : string.Empty;
+            settings.SelectedFilter = AdvancedCategoryFilter ? cboFilter.Text : string.Empty;
 
-            if (lstCategories.SelectedItems.Count > 0) settings.Category = lstCategories.SelectedItems[0].Name;
+            if (lstCategories.SelectedItems.Count > 0) settings.SelectedCategory = lstCategories.SelectedItems[0].Name;
 
             SaveSelectedAutoCats();
 

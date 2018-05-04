@@ -1,20 +1,24 @@
-﻿/*
-This file is part of Depressurizer.
-Copyright 2011, 2012, 2013 Steve Labbe.
+﻿#region License
 
-Depressurizer is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+//     This file (DlgOptions.cs) is part of Depressurizer.
+//     Copyright (C) 2018  Martijn Vegter
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-Depressurizer is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+#endregion
 
-You should have received a copy of the GNU General Public License
-along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#region
 
 using System;
 using System.Collections.Generic;
@@ -22,207 +26,202 @@ using System.Globalization;
 using System.Windows.Forms;
 using Depressurizer.Core;
 using Rallion;
+using Enum = System.Enum;
+
+#endregion
 
 namespace Depressurizer
 {
-    public partial class DlgOptions : Form
-    {
-        public DlgOptions()
-        {
-            InitializeComponent();
+	public partial class DlgOptions : Form
+	{
+		#region Constructors and Destructors
 
-            // Set up help tooltips
-            ttHelp.Ext_SetToolTip(helpIncludeImputedTimes, GlobalStrings.DlgOptions_Help_IncludeImputedTimes);
-        }
+		public DlgOptions()
+		{
+			InitializeComponent();
 
-        private void OptionsForm_Load(object sender, EventArgs e)
-        {
-            string[] levels = Enum.GetNames(typeof(LoggerLevel));
-            cmbLogLevel.Items.AddRange(levels);
+			// Set up help tooltips
+			ttHelp.Ext_SetToolTip(helpIncludeImputedTimes, GlobalStrings.DlgOptions_Help_IncludeImputedTimes);
+		}
 
-            //UI languages
-            List<string> UILanguages = new List<string>();
-            foreach (string l in Enum.GetNames(typeof(UILanguage)))
-            {
-                string name;
-                switch (l)
-                {
-                    case "windows":
-                        name = "Default";
-                        break;
-                    default:
-                        name = CultureInfo.GetCultureInfo(l).NativeName;
-                        break;
-                }
-                UILanguages.Add(name);
-            }
-            cmbUILanguage.Items.AddRange(UILanguages.ToArray());
+		#endregion
 
-            //Store Languages
-            List<string> storeLanguages = new List<string>();
-            foreach (string l in Enum.GetNames(typeof(StoreLanguage)))
-            {
-                string name;
-                switch (l)
-                {
-                    case "windows":
-                        name = "Default";
-                        break;
-                    case "zh_Hans":
-                        name = CultureInfo.GetCultureInfo("zh-Hans").NativeName;
-                        break;
-                    case "zh_Hant":
-                        name = CultureInfo.GetCultureInfo("zh-Hant").NativeName;
-                        break;
-                    case "pt_BR":
-                        name = CultureInfo.GetCultureInfo("pt-BR").NativeName;
-                        break;
-                    default:
-                        name = CultureInfo.GetCultureInfo(l).NativeName;
-                        break;
-                }
-                storeLanguages.Add(name);
-            }
-            cmbStoreLanguage.Items.AddRange(storeLanguages.ToArray());
+		#region Properties
 
-            FillFieldsFromSettings();
-        }
+		private static Settings Settings => Settings.Instance;
 
-        private void FillFieldsFromSettings()
-        {
-            Settings settings = Settings.Instance;
-            txtSteamPath.Text = settings.SteamPath;
-            txtDefaultProfile.Text = settings.ProfileToLoad;
-            switch (settings.StartupAction)
-            {
-                case StartupAction.Load:
-                    radLoad.Checked = true;
-                    break;
-                case StartupAction.Create:
-                    radCreate.Checked = true;
-                    break;
-                default:
-                    radNone.Checked = true;
-                    break;
-            }
-            switch (settings.ListSource)
-            {
-                case GameListSource.XmlPreferred:
-                    cmbDatSrc.SelectedIndex = 0;
-                    break;
-                case GameListSource.XmlOnly:
-                    cmbDatSrc.SelectedIndex = 1;
-                    break;
-                case GameListSource.WebsiteOnly:
-                    cmbDatSrc.SelectedIndex = 2;
-                    break;
-            }
+		#endregion
 
-            chkUpdateAppInfoOnStartup.Checked = settings.UpdateAppInfoOnStart;
-            chkUpdateHltbOnStartup.Checked = settings.UpdateHLTBOnStart;
-            chkIncludeImputedTimes.Checked = settings.IncludeImputedTimes;
-            chkAutosaveDB.Checked = settings.AutosaveDB;
-            numScrapePromptDays.Value = settings.ScrapePromptDays;
+		#region Methods
 
-            chkCheckForDepressurizerUpdates.Checked = settings.CheckForDepressurizerUpdates;
+		private void cmdAccept_Click(object sender, EventArgs e)
+		{
+			SaveFieldsToSettings();
+			Close();
+		}
 
-            chkRemoveExtraEntries.Checked = settings.RemoveExtraEntries;
+		private void cmdCancel_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 
-            //supported languages have an enum value of 1-5 (en, es, ru, uk, nl). 0 is windows language.
-            cmbUILanguage.SelectedIndex = (int) settings.UserLang;
-            cmbStoreLanguage.SelectedIndex = (int) settings.StoreLang;
-        }
+		private void cmdDefaultProfileBrowse_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog dlg = new OpenFileDialog();
+			DialogResult res = dlg.ShowDialog();
+			if (res == DialogResult.OK)
+			{
+				txtDefaultProfile.Text = dlg.FileName;
+			}
+		}
 
-        private void SaveFieldsToSettings()
-        {
-            Settings settings = Settings.Instance;
+		private void cmdSteamPathBrowse_Click(object sender, EventArgs e)
+		{
+			FolderBrowserDialog dlg = new FolderBrowserDialog();
+			DialogResult res = dlg.ShowDialog();
+			if (res == DialogResult.OK)
+			{
+				txtSteamPath.Text = dlg.SelectedPath;
+			}
+		}
 
-            settings.SteamPath = txtSteamPath.Text;
-            if (radLoad.Checked)
-            {
-                settings.StartupAction = StartupAction.Load;
-            }
-            else if (radCreate.Checked)
-            {
-                settings.StartupAction = StartupAction.Create;
-            }
-            else
-            {
-                settings.StartupAction = StartupAction.None;
-            }
+		private void FillFieldsFromSettings()
+		{
+			txtSteamPath.Text = Settings.SteamPath;
+			txtDefaultProfile.Text = Settings.ProfileToLoad;
+			switch (Settings.StartupAction)
+			{
+				case StartupAction.LoadProfile:
+					radLoad.Checked = true;
+					break;
+				case StartupAction.CreateProfile:
+					radCreate.Checked = true;
+					break;
+				default:
+					radNone.Checked = true;
+					break;
+			}
 
-            switch (cmbDatSrc.SelectedIndex)
-            {
-                case 0:
-                    settings.ListSource = GameListSource.XmlPreferred;
-                    break;
-                case 1:
-                    settings.ListSource = GameListSource.XmlOnly;
-                    break;
-                case 2:
-                    settings.ListSource = GameListSource.WebsiteOnly;
-                    break;
-            }
+			switch (Settings.ListSource)
+			{
+				case GameListSource.XmlPreferred:
+					cmbDatSrc.SelectedIndex = 0;
+					break;
+				case GameListSource.XmlOnly:
+					cmbDatSrc.SelectedIndex = 1;
+					break;
+				case GameListSource.WebsiteOnly:
+					cmbDatSrc.SelectedIndex = 2;
+					break;
+			}
 
-            settings.ProfileToLoad = txtDefaultProfile.Text;
+			chkUpdateAppInfoOnStartup.Checked = Settings.UpdateAppInfoOnStart;
+			chkUpdateHltbOnStartup.Checked = Settings.UpdateHLTBOnStart;
+			chkIncludeImputedTimes.Checked = Settings.IncludeImputedTimes;
+			chkAutosaveDB.Checked = Settings.AutoSaveDatabase;
+			numScrapePromptDays.Value = Settings.ScrapePromptDays;
 
-            settings.UpdateAppInfoOnStart = chkUpdateAppInfoOnStartup.Checked;
-            settings.UpdateHLTBOnStart = chkUpdateHltbOnStartup.Checked;
-            settings.IncludeImputedTimes = chkIncludeImputedTimes.Checked;
-            settings.AutosaveDB = chkAutosaveDB.Checked;
-            settings.ScrapePromptDays = (int) numScrapePromptDays.Value;
+			chkCheckForDepressurizerUpdates.Checked = Settings.CheckForUpdates;
 
-            settings.CheckForDepressurizerUpdates = chkCheckForDepressurizerUpdates.Checked;
+			chkRemoveExtraEntries.Checked = Settings.RemoveExtraEntries;
 
-            settings.RemoveExtraEntries = chkRemoveExtraEntries.Checked;
+			//supported languages have an enum value of 1-5 (en, es, ru, uk, nl). 0 is windows language.
+			cmbUILanguage.SelectedIndex = (int) Settings.InterfaceLanguage;
+			cmbStoreLanguage.SelectedIndex = (int) Settings.StoreLanguage;
+		}
 
-            settings.UserLang = (UILanguage) cmbUILanguage.SelectedIndex;
-            settings.StoreLang = (StoreLanguage) cmbStoreLanguage.SelectedIndex;
+		private void OptionsForm_Load(object sender, EventArgs e)
+		{
+			string[] levels = Enum.GetNames(typeof(LoggerLevel));
+			cmbLogLevel.Items.AddRange(levels);
 
-            try
-            {
-                settings.Save();
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(GlobalStrings.DlgOptions_ErrorSavingSettingsFile + e.Message,
-                    GlobalStrings.DBEditDlg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+			foreach (string language in Enum.GetNames(typeof(InterfaceLanguage)))
+			{
+				cmbUILanguage.Items.Add(language);
+			}
 
-        #region Event handlers
+			//Store Languages
+			List<string> storeLanguages = new List<string>();
+			foreach (string l in Enum.GetNames(typeof(StoreLanguage)))
+			{
+				string name;
+				switch (l)
+				{
+					case "windows":
+						name = "Default";
+						break;
+					case "zh_Hans":
+						name = CultureInfo.GetCultureInfo("zh-Hans").NativeName;
+						break;
+					case "zh_Hant":
+						name = CultureInfo.GetCultureInfo("zh-Hant").NativeName;
+						break;
+					case "pt_BR":
+						name = CultureInfo.GetCultureInfo("pt-BR").NativeName;
+						break;
+					default:
+						name = CultureInfo.GetCultureInfo(l).NativeName;
+						break;
+				}
 
-        private void cmdCancel_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+				storeLanguages.Add(name);
+			}
 
-        private void cmdAccept_Click(object sender, EventArgs e)
-        {
-            SaveFieldsToSettings();
-            Close();
-        }
+			cmbStoreLanguage.Items.AddRange(storeLanguages.ToArray());
 
-        private void cmdSteamPathBrowse_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog dlg = new FolderBrowserDialog();
-            DialogResult res = dlg.ShowDialog();
-            if (res == DialogResult.OK)
-            {
-                txtSteamPath.Text = dlg.SelectedPath;
-            }
-        }
+			FillFieldsFromSettings();
+		}
 
-        private void cmdDefaultProfileBrowse_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog dlg = new OpenFileDialog();
-            DialogResult res = dlg.ShowDialog();
-            if (res == DialogResult.OK)
-            {
-                txtDefaultProfile.Text = dlg.FileName;
-            }
-        }
+		private void SaveFieldsToSettings()
+		{
+			Settings.SteamPath = txtSteamPath.Text;
+			if (radLoad.Checked)
+			{
+				Settings.StartupAction = StartupAction.LoadProfile;
+			}
+			else if (radCreate.Checked)
+			{
+				Settings.StartupAction = StartupAction.CreateProfile;
+			}
 
-        #endregion
-    }
+			switch (cmbDatSrc.SelectedIndex)
+			{
+				case 0:
+					Settings.ListSource = GameListSource.XmlPreferred;
+					break;
+				case 1:
+					Settings.ListSource = GameListSource.XmlOnly;
+					break;
+				case 2:
+					Settings.ListSource = GameListSource.WebsiteOnly;
+					break;
+			}
+
+			Settings.ProfileToLoad = txtDefaultProfile.Text;
+
+			Settings.UpdateAppInfoOnStart = chkUpdateAppInfoOnStartup.Checked;
+			Settings.UpdateHLTBOnStart = chkUpdateHltbOnStartup.Checked;
+			Settings.IncludeImputedTimes = chkIncludeImputedTimes.Checked;
+			Settings.AutoSaveDatabase = chkAutosaveDB.Checked;
+			Settings.ScrapePromptDays = (int) numScrapePromptDays.Value;
+
+			Settings.CheckForUpdates = chkCheckForDepressurizerUpdates.Checked;
+
+			Settings.RemoveExtraEntries = chkRemoveExtraEntries.Checked;
+
+			Settings.InterfaceLanguage = (InterfaceLanguage) cmbUILanguage.SelectedIndex;
+			Settings.StoreLanguage = (StoreLanguage) cmbStoreLanguage.SelectedIndex;
+
+			try
+			{
+				Settings.Save();
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(GlobalStrings.DlgOptions_ErrorSavingSettingsFile + e.Message, GlobalStrings.DBEditDlg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
+		#endregion
+	}
 }

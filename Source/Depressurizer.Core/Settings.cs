@@ -20,18 +20,29 @@
 
 #region
 
+using System.Globalization;
 using System.IO;
+using System.Threading;
 using Newtonsoft.Json;
 
 #endregion
 
 namespace Depressurizer.Core
 {
+	/// <summary>
+	///     Action on startup
+	/// </summary>
 	public enum StartupAction
 	{
-		None,
-		Load,
-		Create
+		/// <summary>
+		///     Create a Depressurizer profile
+		/// </summary>
+		CreateProfile,
+
+		/// <summary>
+		///     Load a Depressurizer profile
+		/// </summary>
+		LoadProfile
 	}
 
 	public enum GameListSource
@@ -41,16 +52,47 @@ namespace Depressurizer.Core
 		WebsiteOnly
 	}
 
-	public enum UILanguage
+	/// <summary>
+	///     Depressurizer Interface Languages
+	/// </summary>
+	/// <remarks>
+	///     Format: https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx
+	/// </remarks>
+	public enum InterfaceLanguage
 	{
-		windows,
-		en, // English
-		es, // Spanish
-		ru, // Russian
-		uk, // Ukranian
-		nl // Dutch
+		/// <summary>
+		///     Dutch - The Netherlands
+		/// </summary>
+		Dutch,
+
+		/// <summary>
+		///     English - United States
+		/// </summary>
+		English,
+
+		/// <summary>
+		///     Russian - Russia
+		/// </summary>
+		Russian,
+
+		/// <summary>
+		///     Spanish - Spain
+		/// </summary>
+		Spanish,
+
+		/// <summary>
+		///     Ukrainian - Ukraine
+		/// </summary>
+		Ukranian
 	}
 
+	/// <summary>
+	///     Languages supported on Steam.
+	/// </summary>
+	/// <remarks>
+	///     https://partner.steamgames.com/doc/store/localization
+	///     https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx
+	/// </remarks>
 	public enum StoreLanguage
 	{
 		windows,
@@ -101,21 +143,17 @@ namespace Depressurizer.Core
 
 		public int SplitGameContainerHeight = 510;
 
-		private string _autocats;
+		private bool _autoSaveDatabase = true;
 
-		private bool _autosaveDB = true;
-
-		private string _category;
-
-		private bool _checkForDepressurizerUpdates = true;
+		private bool _checkForUpdates = true;
 
 		private int _configBackupCount = 3;
 
-		private string _filter;
-
 		private int _height;
 
-		private bool _IncludeImputedTimes = true;
+		private bool _includeImputedTimes = true;
+
+		private InterfaceLanguage _interfaceLanguage = InterfaceLanguage.English;
 
 		private GameListSource _listSource = GameListSource.XmlPreferred;
 
@@ -127,13 +165,19 @@ namespace Depressurizer.Core
 
 		private int _scrapePromptDays = 30;
 
+		private string _selectedAutoCats;
+
+		private string _selectedCategory;
+
+		private string _selectedFilter;
+
 		private bool _singleCatMode;
 		private int _splitBrowser;
 
 		private int _splitContainer;
 		private int _splitGame;
 
-		private StartupAction _startupAction = StartupAction.Create;
+		private StartupAction _startupAction = StartupAction.CreateProfile;
 
 		private string _steamPath = null;
 		private StoreLanguage _storeLanguage = StoreLanguage.windows;
@@ -141,8 +185,6 @@ namespace Depressurizer.Core
 		private bool _updateAppInfoOnStart = true;
 
 		private bool _updateHLTBOnStart = true;
-
-		private UILanguage _userLanguage = UILanguage.windows;
 
 		private int _width;
 
@@ -184,74 +226,68 @@ namespace Depressurizer.Core
 			}
 		}
 
-		public string AutoCats
+		/// <summary>
+		///     Automatically Save Database
+		/// </summary>
+		public bool AutoSaveDatabase
 		{
-			get => _autocats;
-			set
+			get
 			{
-				if (_autocats != value)
+				lock (SyncRoot)
 				{
-					_autocats = value;
+					return _autoSaveDatabase;
 				}
 			}
-		}
 
-		public bool AutosaveDB
-		{
-			get => _autosaveDB;
-			set
-			{
-				if (_autosaveDB != value)
-				{
-					_autosaveDB = value;
-				}
-			}
-		}
-
-		public string Category
-		{
-			get => _category;
 			set
 			{
 				lock (SyncRoot)
 				{
-					_category = value;
+					_autoSaveDatabase = value;
 				}
 			}
 		}
 
-		public bool CheckForDepressurizerUpdates
+		/// <summary>
+		///     Check for Depressurizer updates on startup
+		/// </summary>
+		public bool CheckForUpdates
 		{
-			get => _checkForDepressurizerUpdates;
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _checkForUpdates;
+				}
+			}
+
 			set
 			{
 				lock (SyncRoot)
 				{
-					_checkForDepressurizerUpdates = value;
+					_checkForUpdates = value;
 				}
 			}
 		}
 
+		/// <summary>
+		///     Num of backups to keep of the Steam config files
+		/// </summary>
 		public int ConfigBackupCount
 		{
-			get => _configBackupCount;
-			set
+			get
 			{
-				if (_configBackupCount != value)
+				lock (SyncRoot)
 				{
-					_configBackupCount = value;
+					return _configBackupCount;
 				}
 			}
-		}
 
-		public string Filter
-		{
-			get => _filter;
 			set
 			{
-				if (_filter != value)
+				lock (SyncRoot)
 				{
-					_filter = value;
+					_configBackupCount = value;
 				}
 			}
 		}
@@ -282,30 +318,73 @@ namespace Depressurizer.Core
 			}
 		}
 
+		/// <summary>
+		///     Include HowLongToBeat imputed times
+		/// </summary>
 		public bool IncludeImputedTimes
 		{
-			get => _IncludeImputedTimes;
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _includeImputedTimes;
+				}
+			}
+
 			set
 			{
-				if (_IncludeImputedTimes != value)
+				lock (SyncRoot)
 				{
-					_IncludeImputedTimes = value;
+					_includeImputedTimes = value;
+				}
+			}
+		}
+
+		/// <summary>
+		///     Depressurizer interface language
+		/// </summary>
+		public InterfaceLanguage InterfaceLanguage
+		{
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _interfaceLanguage;
+				}
+			}
+
+			set
+			{
+				lock (SyncRoot)
+				{
+					_interfaceLanguage = value;
+					ChangeInterfaceLanguage(_interfaceLanguage);
 				}
 			}
 		}
 
 		public GameListSource ListSource
 		{
-			get => _listSource;
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _listSource;
+				}
+			}
+
 			set
 			{
-				if (_listSource != value)
+				lock (SyncRoot)
 				{
 					_listSource = value;
 				}
 			}
 		}
 
+		/// <summary>
+		///     Last state of LstGames
+		/// </summary>
 		public string LstGamesState
 		{
 			get
@@ -324,12 +403,22 @@ namespace Depressurizer.Core
 			}
 		}
 
+		/// <summary>
+		///     Profile to Load
+		/// </summary>
 		public string ProfileToLoad
 		{
-			get => _profileToLoad;
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _profileToLoad;
+				}
+			}
+
 			set
 			{
-				if (_profileToLoad != value)
+				lock (SyncRoot)
 				{
 					_profileToLoad = value;
 				}
@@ -338,28 +427,114 @@ namespace Depressurizer.Core
 
 		public bool RemoveExtraEntries
 		{
-			get => _removeExtraEntries;
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _removeExtraEntries;
+				}
+			}
+
 			set
 			{
-				if (_removeExtraEntries != value)
+				lock (SyncRoot)
 				{
 					_removeExtraEntries = value;
 				}
 			}
 		}
 
+		/// <summary>
+		///     Re-scrape after X days
+		/// </summary>
 		public int ScrapePromptDays
 		{
-			get => _scrapePromptDays;
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _scrapePromptDays;
+				}
+			}
+
 			set
 			{
-				if (_scrapePromptDays != value)
+				lock (SyncRoot)
 				{
 					_scrapePromptDays = value;
 				}
 			}
 		}
 
+		/// <summary>
+		///     Selected AutoCats
+		/// </summary>
+		public string SelectedAutoCats
+		{
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _selectedAutoCats;
+				}
+			}
+
+			set
+			{
+				lock (SyncRoot)
+				{
+					_selectedAutoCats = value;
+				}
+			}
+		}
+
+		/// <summary>
+		///     Selected Category
+		/// </summary>
+		public string SelectedCategory
+		{
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _selectedCategory;
+				}
+			}
+
+			set
+			{
+				lock (SyncRoot)
+				{
+					_selectedCategory = value;
+				}
+			}
+		}
+
+		/// <summary>
+		///     Selected Filter
+		/// </summary>
+		public string SelectedFilter
+		{
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _selectedFilter;
+				}
+			}
+
+			set
+			{
+				lock (SyncRoot)
+				{
+					_selectedFilter = value;
+				}
+			}
+		}
+
+		/// <summary>
+		///     Single category mode
+		/// </summary>
 		public bool SingleCatMode
 		{
 			get
@@ -382,16 +557,19 @@ namespace Depressurizer.Core
 		{
 			get
 			{
-				if (_splitBrowser <= 100)
+				lock (SyncRoot)
 				{
-					SplitBrowser = SplitBrowserContainerWidth - 300;
-				}
+					if (_splitBrowser <= 100)
+					{
+						SplitBrowser = SplitBrowserContainerWidth - 300;
+					}
 
-				return _splitBrowser;
+					return _splitBrowser;
+				}
 			}
 			set
 			{
-				if (_splitBrowser != value)
+				lock (SyncRoot)
 				{
 					_splitBrowser = value;
 				}
@@ -402,16 +580,19 @@ namespace Depressurizer.Core
 		{
 			get
 			{
-				if (_splitContainer <= 100)
+				lock (SyncRoot)
 				{
-					SplitContainer = 250;
-				}
+					if (_splitContainer <= 100)
+					{
+						SplitContainer = 250;
+					}
 
-				return _splitContainer;
+					return _splitContainer;
+				}
 			}
 			set
 			{
-				if (_splitContainer != value)
+				lock (SyncRoot)
 				{
 					_splitContainer = value;
 				}
@@ -422,28 +603,41 @@ namespace Depressurizer.Core
 		{
 			get
 			{
-				if (_splitGame <= 100)
+				lock (SyncRoot)
 				{
-					SplitGame = SplitGameContainerHeight - 150;
-				}
+					if (_splitGame <= 100)
+					{
+						SplitGame = SplitGameContainerHeight - 150;
+					}
 
-				return _splitGame;
+					return _splitGame;
+				}
 			}
 			set
 			{
-				if (_splitGame != value)
+				lock (SyncRoot)
 				{
 					_splitGame = value;
 				}
 			}
 		}
 
+		/// <summary>
+		///     Action on startup
+		/// </summary>
 		public StartupAction StartupAction
 		{
-			get => _startupAction;
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _startupAction;
+				}
+			}
+
 			set
 			{
-				if (_startupAction != value)
+				lock (SyncRoot)
 				{
 					_startupAction = value;
 				}
@@ -472,25 +666,44 @@ namespace Depressurizer.Core
 			}
 		}
 
-		public StoreLanguage StoreLang
+		/// <summary>
+		///     Steam Store language
+		/// </summary>
+		public StoreLanguage StoreLanguage
 		{
-			get => _storeLanguage;
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _storeLanguage;
+				}
+			}
+
 			set
 			{
-				if (_storeLanguage != value)
+				lock (SyncRoot)
 				{
 					_storeLanguage = value;
-					// Database change
 				}
 			}
 		}
 
+		/// <summary>
+		///     Update from appinfo on start
+		/// </summary>
 		public bool UpdateAppInfoOnStart
 		{
-			get => _updateAppInfoOnStart;
+			get
+			{
+				lock (SyncRoot)
+				{
+					return _updateAppInfoOnStart;
+				}
+			}
+
 			set
 			{
-				if (_updateAppInfoOnStart != value)
+				lock (SyncRoot)
 				{
 					_updateAppInfoOnStart = value;
 				}
@@ -498,7 +711,7 @@ namespace Depressurizer.Core
 		}
 
 		/// <summary>
-		///     Update HowLongToBeat On Start
+		///     Update HowLongToBeat-times on start
 		/// </summary>
 		public bool UpdateHLTBOnStart
 		{
@@ -515,19 +728,6 @@ namespace Depressurizer.Core
 				lock (SyncRoot)
 				{
 					_updateHLTBOnStart = value;
-				}
-			}
-		}
-
-		public UILanguage UserLang
-		{
-			get => _userLanguage;
-			set
-			{
-				lock (SyncRoot)
-				{
-					_userLanguage = value;
-					// Interface change
 				}
 			}
 		}
@@ -620,6 +820,11 @@ namespace Depressurizer.Core
 		{
 			lock (SyncRoot)
 			{
+				if (!File.Exists(path))
+				{
+					return;
+				}
+
 				string settings = File.ReadAllText(path);
 				_instance = JsonConvert.DeserializeObject<Settings>(settings);
 			}
@@ -644,6 +849,39 @@ namespace Depressurizer.Core
 				string settings = JsonConvert.SerializeObject(_instance);
 				File.WriteAllText(path, settings);
 			}
+		}
+
+		#endregion
+
+		#region Methods
+
+		private static void ChangeInterfaceLanguage(InterfaceLanguage language)
+		{
+			CultureInfo newCulture;
+
+			switch (language)
+			{
+				case InterfaceLanguage.Dutch:
+					newCulture = new CultureInfo("nl");
+					break;
+				case InterfaceLanguage.English:
+					newCulture = new CultureInfo("en");
+					break;
+				case InterfaceLanguage.Russian:
+					newCulture = new CultureInfo("ru");
+					break;
+				case InterfaceLanguage.Spanish:
+					newCulture = new CultureInfo("es");
+					break;
+				case InterfaceLanguage.Ukranian:
+					newCulture = new CultureInfo("uk");
+					break;
+				default:
+					newCulture = Thread.CurrentThread.CurrentCulture;
+					break;
+			}
+
+			Thread.CurrentThread.CurrentUICulture = newCulture;
 		}
 
 		#endregion
