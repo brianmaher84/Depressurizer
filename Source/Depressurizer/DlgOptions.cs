@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
+using Depressurizer.Core;
 using Rallion;
 
 namespace Depressurizer
@@ -118,7 +119,7 @@ namespace Depressurizer
             }
 
             chkUpdateAppInfoOnStartup.Checked = settings.UpdateAppInfoOnStart;
-            chkUpdateHltbOnStartup.Checked = settings.UpdateHltbOnStart;
+            chkUpdateHltbOnStartup.Checked = settings.UpdateHLTBOnStart;
             chkIncludeImputedTimes.Checked = settings.IncludeImputedTimes;
             chkAutosaveDB.Checked = settings.AutosaveDB;
             numScrapePromptDays.Value = settings.ScrapePromptDays;
@@ -126,10 +127,6 @@ namespace Depressurizer
             chkCheckForDepressurizerUpdates.Checked = settings.CheckForDepressurizerUpdates;
 
             chkRemoveExtraEntries.Checked = settings.RemoveExtraEntries;
-
-            cmbLogLevel.SelectedIndex = (int) settings.LogLevel;
-            numLogSize.Value = settings.LogSize;
-            numLogBackup.Value = settings.LogBackups;
 
             //supported languages have an enum value of 1-5 (en, es, ru, uk, nl). 0 is windows language.
             cmbUILanguage.SelectedIndex = (int) settings.UserLang;
@@ -170,7 +167,7 @@ namespace Depressurizer
             settings.ProfileToLoad = txtDefaultProfile.Text;
 
             settings.UpdateAppInfoOnStart = chkUpdateAppInfoOnStartup.Checked;
-            settings.UpdateHltbOnStart = chkUpdateHltbOnStartup.Checked;
+            settings.UpdateHLTBOnStart = chkUpdateHltbOnStartup.Checked;
             settings.IncludeImputedTimes = chkIncludeImputedTimes.Checked;
             settings.AutosaveDB = chkAutosaveDB.Checked;
             settings.ScrapePromptDays = (int) numScrapePromptDays.Value;
@@ -178,10 +175,6 @@ namespace Depressurizer
             settings.CheckForDepressurizerUpdates = chkCheckForDepressurizerUpdates.Checked;
 
             settings.RemoveExtraEntries = chkRemoveExtraEntries.Checked;
-
-            settings.LogLevel = (LoggerLevel) cmbLogLevel.SelectedIndex;
-            settings.LogSize = (int) numLogSize.Value;
-            settings.LogBackups = (int) numLogBackup.Value;
 
             settings.UserLang = (UILanguage) cmbUILanguage.SelectedIndex;
             settings.StoreLang = (StoreLanguage) cmbStoreLanguage.SelectedIndex;

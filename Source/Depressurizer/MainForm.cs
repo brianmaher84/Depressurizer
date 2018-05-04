@@ -29,6 +29,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Depressurizer.Core;
 using MaterialSkin;
 using MaterialSkin.Controls;
 using Newtonsoft.Json.Linq;
@@ -521,7 +522,7 @@ namespace Depressurizer
                 UpdateGameDBFromAppInfo();
             }
             int aWeekInSecs = 7 * 24 * 60 * 60;
-            if (Settings.Instance.UpdateHltbOnStart && Utility.GetCurrentUTime() >
+            if (Settings.Instance.UpdateHLTBOnStart && Utility.GetCurrentUTime() >
                 (Program.GameDB.LastHltbUpdate + aWeekInSecs))
             {
                 UpdateGameDBFromHltb();
@@ -4209,11 +4210,6 @@ namespace Depressurizer
         }
 
         #endregion Skinning
-
-        private void autoModeHelperToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            (new DlgAutomaticModeHelper(CurrentProfile)).ShowDialog();
-        }
     }
 
     public class CategorySort

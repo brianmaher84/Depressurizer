@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Xml;
+using Depressurizer.Core;
 using Rallion;
 
 namespace Depressurizer

@@ -22,6 +22,7 @@
 
 using System;
 using System.Windows.Forms;
+using Depressurizer.Core;
 using Rallion;
 
 #endregion
@@ -34,6 +35,12 @@ namespace Depressurizer
 
 		public static GameDB GameDB;
 		public static AppLogger Logger;
+
+		#endregion
+
+		#region Properties
+
+		private static Settings Settings => Settings.Instance;
 
 		#endregion
 
@@ -60,7 +67,7 @@ namespace Depressurizer
 				FileNameTemplate = "Depressurizer.log"
 			};
 
-			Settings.Instance.Load();
+			Settings.Load();
 
 			Logger.Write(LoggerLevel.Info, GlobalStrings.Program_ProgramInitialized, Logger.Level);
 
@@ -69,7 +76,7 @@ namespace Depressurizer
 
 		private static void OnApplicationExit(object sender, EventArgs e)
 		{
-			Settings.Instance.Save();
+			Settings.Save();
 
 			Logger.Write(LoggerLevel.Info, GlobalStrings.Program_ProgramClosing);
 			Logger.EndSession();

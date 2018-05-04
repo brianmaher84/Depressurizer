@@ -1470,17 +1470,6 @@ namespace Depressurizer {
             this.menu_Tools_Sep1.Name = "menu_Tools_Sep1";
             resources.ApplyResources(this.menu_Tools_Sep1, "menu_Tools_Sep1");
             // 
-            // autoModeHelperToolStripMenuItem
-            // 
-            this.autoModeHelperToolStripMenuItem.Name = "autoModeHelperToolStripMenuItem";
-            resources.ApplyResources(this.autoModeHelperToolStripMenuItem, "autoModeHelperToolStripMenuItem");
-            this.autoModeHelperToolStripMenuItem.Click += new System.EventHandler(this.autoModeHelperToolStripMenuItem_Click);
-            // 
-            // menu_Tools_Sep2
-            // 
-            this.menu_Tools_Sep2.Name = "menu_Tools_Sep2";
-            resources.ApplyResources(this.menu_Tools_Sep2, "menu_Tools_Sep2");
-            // 
             // menu_Tools_DBEdit
             // 
             this.menu_Tools_DBEdit.Name = "menu_Tools_DBEdit";
