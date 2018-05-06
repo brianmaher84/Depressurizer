@@ -23,107 +23,13 @@
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using Depressurizer.Core.Enums;
 using Newtonsoft.Json;
 
 #endregion
 
 namespace Depressurizer.Core
 {
-	/// <summary>
-	///     Action on startup
-	/// </summary>
-	public enum StartupAction
-	{
-		/// <summary>
-		///     Create a Depressurizer profile
-		/// </summary>
-		CreateProfile,
-
-		/// <summary>
-		///     Load a Depressurizer profile
-		/// </summary>
-		LoadProfile
-	}
-
-	public enum GameListSource
-	{
-		XmlPreferred,
-		XmlOnly,
-		WebsiteOnly
-	}
-
-	/// <summary>
-	///     Depressurizer Interface Languages
-	/// </summary>
-	/// <remarks>
-	///     Format: https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx
-	/// </remarks>
-	public enum InterfaceLanguage
-	{
-		/// <summary>
-		///     Dutch - The Netherlands
-		/// </summary>
-		Dutch,
-
-		/// <summary>
-		///     English - United States
-		/// </summary>
-		English,
-
-		/// <summary>
-		///     Russian - Russia
-		/// </summary>
-		Russian,
-
-		/// <summary>
-		///     Spanish - Spain
-		/// </summary>
-		Spanish,
-
-		/// <summary>
-		///     Ukrainian - Ukraine
-		/// </summary>
-		Ukranian
-	}
-
-	/// <summary>
-	///     Languages supported on Steam.
-	/// </summary>
-	/// <remarks>
-	///     https://partner.steamgames.com/doc/store/localization
-	///     https://msdn.microsoft.com/en-us/library/ee825488(v=cs.20).aspx
-	/// </remarks>
-	public enum StoreLanguage
-	{
-		windows,
-		bg, // Bulgarian
-		cs, // Czech
-		da, // Danish
-		nl, // Dutch
-		en, // English
-		fi, // Finnish
-		fr, // French
-		de, // German
-		el, // Greek
-		hu, // Hungarian
-		it, // Italian
-		ja, // Japanese
-		ko, // Korean
-		no, // Norwegian
-		pl, // Polish
-		pt, // Portuguese
-		pt_BR, // Portuguese (Brasil)
-		ro, // Romanian
-		ru, // Russian
-		zh_Hans, // Simplified Chinese
-		es, // Spanish
-		sv, // Swedish
-		th, // Thai
-		zh_Hant, // Traditional Chinese
-		tr, // Turkish
-		uk // Ukrainian
-	}
-
 	/// <summary>
 	///     Depressurizer settings controller
 	/// </summary>

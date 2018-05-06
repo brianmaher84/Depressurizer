@@ -29,6 +29,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using Depressurizer.Core;
+using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
 using Depressurizer.Properties;
 using Rallion;

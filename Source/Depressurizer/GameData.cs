@@ -7,6 +7,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Depressurizer.Core;
+using Depressurizer.Core.Enums;
 using Rallion;
 /*
 This file is part of Depressurizer.
@@ -28,21 +29,7 @@ along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Depressurizer
 {
-    /// <summary>
-    /// Listing of the different ways to find out about a game.
-    /// The higher values take precedence over the lower values. If a game already exists with a PackageFree type, it cannot change to SteamConfig.
-    /// </summary>
-    public enum GameListingSource
-    {
-        Unknown,
-        SteamConfig,
-        WebProfile,
-        PackageFree,
-        PackageNormal,
-        Manual
-    }
-
-    /// <summary>
+	/// <summary>
     /// Represents a single game and its categories.
     /// </summary>
     public class GameInfo

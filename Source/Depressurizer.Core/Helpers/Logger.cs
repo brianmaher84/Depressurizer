@@ -26,48 +26,12 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Depressurizer.Core.Enums;
 
 #endregion
 
 namespace Depressurizer.Core.Helpers
 {
-	/// <summary>
-	///     Defines the set of levels recognized by the system.
-	/// </summary>
-	public enum LogLevel
-	{
-		/// <summary>
-		///     The Verbose level designates fine-grained informational events that are most useful to debug an application.
-		/// </summary>
-		Verbose,
-
-		/// <summary>
-		///     The Debug level designates fine-grained informational events that are most useful to debug an application.
-		/// </summary>
-		Debug,
-
-		/// <summary>
-		///     The Info level designates informational messages that highlight the progress of the application at coarse-grained
-		///     level.
-		/// </summary>
-		Info,
-
-		/// <summary>
-		///     The Warn level designates potentially harmful situations.
-		/// </summary>
-		Warn,
-
-		/// <summary>
-		///     The Error level designates error events that might still allow the application to continue running.
-		/// </summary>
-		Error,
-
-		/// <summary>
-		///     The Fatal level designates very severe error events that will presumably lead the application to abort.
-		/// </summary>
-		Fatal
-	}
-
 	/// <summary>
 	///     Logger Controller
 	/// </summary>

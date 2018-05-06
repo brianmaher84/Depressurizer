@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Depressurizer.Core.Enums;
 using Rallion;
 
 namespace Depressurizer

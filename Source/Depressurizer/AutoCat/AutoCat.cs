@@ -18,10 +18,10 @@ along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using Depressurizer.Core.Enums;
 
 /* ADDING NEW AUTOCAT METHODS
  * 
@@ -63,34 +63,7 @@ using System.Xml.Serialization;
 
 namespace Depressurizer
 {
-    public enum AutoCatType
-    {
-        [Description("None")] None,
-        [Description("AutoCatGenre")] Genre,
-        [Description("AutoCatFlags")] Flags,
-        [Description("AutoCatTags")] Tags,
-        [Description("AutoCatYear")] Year,
-        [Description("AutoCatUserScore")] UserScore,
-        [Description("AutoCatHltb")] Hltb,
-        [Description("AutoCatManual")] Manual,
-        [Description("AutoCatDevPub")] DevPub,
-        [Description("AutoCatGroup")] Group,
-        [Description("AutoCatName")] Name,
-        [Description("AutoCatVrSupport")] VrSupport,
-        [Description("AutoCatLanguage")] Language,
-        [Description("AutoCatCurator")] Curator,
-        [Description("AutoCatPlatform")] Platform
-    }
-
-    public enum AutoCatResult
-    {
-        Success,
-        Failure,
-        NotInDatabase,
-        Filtered
-    }
-
-    /// <summary>
+	/// <summary>
     /// Abstract base class for autocategorization schemes. Call PreProcess before any set of autocat operations.
     /// This is a preliminary form, and may change in future versions.
     /// Returning only true / false on a categorization attempt may prove too simplistic.

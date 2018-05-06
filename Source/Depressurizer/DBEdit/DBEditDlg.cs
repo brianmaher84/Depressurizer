@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using Depressurizer.Core;
+using Depressurizer.Core.Enums;
 using Rallion;
 
 namespace Depressurizer

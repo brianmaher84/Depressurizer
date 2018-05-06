@@ -48,12 +48,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\AppPlatforms.cs" />
+    <Compile Include="Enums\AppTypes.cs" />
+    <Compile Include="Enums\AutoCatResult.cs" />
+    <Compile Include="Enums\AutoCatType.cs" />
+    <Compile Include="Enums\GameListingSource.cs" />
+    <Compile Include="Enums\PackageBillingType.cs" />
+    <Compile Include="Enums\GameListSource.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Enums\LogLevel.cs" />
+    <Compile Include="Enums\InterfaceLanguage.cs" />
     <Compile Include="Models\LanguageSupport.cs" />
     <Compile Include="Models\VRSupport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Enums\StartupAction.cs" />
+    <Compile Include="Enums\StoreLanguage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Depressurizer.Core.ruleset" />

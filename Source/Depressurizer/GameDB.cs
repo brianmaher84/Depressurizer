@@ -32,6 +32,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using Depressurizer.Core;
+using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
 using Depressurizer.Properties;
 using Newtonsoft.Json.Linq;
