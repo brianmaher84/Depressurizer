@@ -19,6 +19,7 @@ along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Xml;
 using Depressurizer.Core.Enums;
+using Depressurizer.Core.Models;
 using Rallion;
 
 namespace Depressurizer

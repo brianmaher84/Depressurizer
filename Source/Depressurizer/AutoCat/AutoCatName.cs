@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Xml;
 using Depressurizer.Core.Enums;
+using Depressurizer.Core.Models;
 using Rallion;
 
 namespace Depressurizer

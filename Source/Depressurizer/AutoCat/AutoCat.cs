@@ -22,6 +22,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using Depressurizer.Core.Enums;
+using Depressurizer.Core.Models;
 
 /* ADDING NEW AUTOCAT METHODS
  * 

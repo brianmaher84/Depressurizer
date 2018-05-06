@@ -59,6 +59,8 @@
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Enums\LogLevel.cs" />
     <Compile Include="Enums\InterfaceLanguage.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Filter.cs" />
     <Compile Include="Models\LanguageSupport.cs" />
     <Compile Include="Models\VRSupport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
