@@ -1,20 +1,24 @@
-﻿/*
-This file is part of Depressurizer.
-Copyright 2011, 2012, 2013 Steve Labbe.
+﻿#region License
 
-Depressurizer is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+//     This file (CDlgUpdateProfile.cs) is part of Depressurizer.
+//     Copyright (C) 2018  Martijn Vegter
+// 
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU General Public License as published by
+//     the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+// 
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU General Public License for more details.
+// 
+//     You should have received a copy of the GNU General Public License
+//     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-Depressurizer is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+#endregion
 
-You should have received a copy of the GNU General Public License
-along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
-*/
+#region
 
 using System;
 using System.Collections.Generic;
@@ -23,138 +27,148 @@ using Depressurizer.Core;
 using Depressurizer.Core.Enums;
 using Rallion;
 
+#endregion
+
 namespace Depressurizer
 {
-    class CDlgUpdateProfile : CancelableDlg
-    {
-        public int Fetched { get; private set; }
-        public int Added { get; private set; }
-        public int Removed { get; private set; }
+	internal class CDlgUpdateProfile : CancelableDlg
+	{
+		#region Fields
 
-        public bool UseHtml { get; private set; }
-        public bool Failover { get; private set; }
+		private readonly bool custom;
+		private readonly string customUrl;
+		private readonly GameList data;
 
-        private Int64 SteamId;
-        private string customUrl;
-        private bool custom;
-        private GameList data;
+		private XmlDocument doc;
+		private string htmlDoc;
+		private readonly SortedSet<int> ignore;
 
-        XmlDocument doc;
-        string htmlDoc;
+		private readonly bool overwrite;
 
-        private bool overwrite;
-        private SortedSet<int> ignore;
-        private bool includeUnknown;
+		private readonly long SteamId;
 
-        public CDlgUpdateProfile(GameList data, Int64 accountId, bool overwrite, SortedSet<int> ignore,
-            bool inclUnknown)
-            : base(GlobalStrings.CDlgUpdateProfile_UpdatingGameList, true)
-        {
-            custom = false;
-            SteamId = accountId;
+		#endregion
 
-            Added = 0;
-            Fetched = 0;
-            UseHtml = false;
-            Failover = false;
+		#region Constructors and Destructors
 
-            this.data = data;
+		public CDlgUpdateProfile(GameList data, long accountId, bool overwrite, SortedSet<int> ignore) : base(GlobalStrings.CDlgUpdateProfile_UpdatingGameList, true)
+		{
+			custom = false;
+			SteamId = accountId;
 
-            this.overwrite = overwrite;
-            this.ignore = ignore;
+			Added = 0;
+			Fetched = 0;
+			UseHtml = false;
+			Failover = false;
 
-            includeUnknown = inclUnknown;
+			this.data = data;
 
-            SetText(GlobalStrings.CDlgFetch_DownloadingGameList);
-        }
+			this.overwrite = overwrite;
+			this.ignore = ignore;
 
-        public CDlgUpdateProfile(GameList data, string customUrl, bool overwrite, SortedSet<int> ignore,
-            bool inclUnknown)
-            : base(GlobalStrings.CDlgUpdateProfile_UpdatingGameList, true)
-        {
-            custom = true;
-            this.customUrl = customUrl;
+			SetText(GlobalStrings.CDlgFetch_DownloadingGameList);
+		}
 
-            Added = 0;
-            Fetched = 0;
-            UseHtml = false;
-            Failover = false;
+		public CDlgUpdateProfile(GameList data, string customUrl, bool overwrite, SortedSet<int> ignore) : base(GlobalStrings.CDlgUpdateProfile_UpdatingGameList, true)
+		{
+			custom = true;
+			this.customUrl = customUrl;
 
-            this.data = data;
+			Added = 0;
+			Fetched = 0;
+			UseHtml = false;
+			Failover = false;
 
-            this.overwrite = overwrite;
-            this.ignore = ignore;
+			this.data = data;
 
-            includeUnknown = inclUnknown;
+			this.overwrite = overwrite;
+			this.ignore = ignore;
 
-            SetText(GlobalStrings.CDlgFetch_DownloadingGameList);
-        }
+			SetText(GlobalStrings.CDlgFetch_DownloadingGameList);
+		}
 
-        protected override void RunProcess()
-        {
-            Added = 0;
-            Fetched = 0;
-            switch (Settings.Instance.ListSource)
-            {
-                case GameListSource.XmlPreferred:
-                    FetchXmlPref();
-                    break;
-                case GameListSource.XmlOnly:
-                    FetchXml();
-                    break;
-                case GameListSource.WebsiteOnly:
-                    FetchHtml();
-                    break;
-            }
+		#endregion
 
-            OnThreadCompletion();
-        }
+		#region Public Properties
 
-        protected void FetchXml()
-        {
-            UseHtml = false;
-            doc = custom ? GameList.FetchXmlGameList(customUrl) : GameList.FetchXmlGameList(SteamId);
-        }
+		public int Added { get; private set; }
+		public bool Failover { get; private set; }
+		public int Fetched { get; private set; }
+		public int Removed { get; private set; }
 
-        protected void FetchHtml()
-        {
-            UseHtml = true;
-            htmlDoc = custom ? GameList.FetchHtmlGameList(customUrl) : GameList.FetchHtmlGameList(SteamId);
-        }
+		public bool UseHtml { get; private set; }
 
-        protected void FetchXmlPref()
-        {
-            try
-            {
-                FetchXml();
-                return;
-            }
-            catch (Exception) { }
-            Failover = true;
-            FetchHtml();
-        }
+		#endregion
 
-        protected override void Finish()
-        {
-            if (!Canceled && Error == null && (UseHtml ? (htmlDoc != null) : (doc != null)))
-            {
-                SetText(GlobalStrings.CDlgFetch_FinishingDownload);
-                if (UseHtml)
-                {
-                    int newItems;
-                    Fetched = data.IntegrateHtmlGameList(htmlDoc, overwrite, ignore,
-                        includeUnknown ? AppTypes.InclusionUnknown : AppTypes.InclusionNormal, out newItems);
-                    Added = newItems;
-                }
-                else
-                {
-                    int newItems;
-                    Fetched = data.IntegrateXmlGameList(doc, overwrite, ignore,
-                        includeUnknown ? AppTypes.InclusionUnknown : AppTypes.InclusionNormal, out newItems);
-                    Added = newItems;
-                }
-                OnJobCompletion();
-            }
-        }
-    }
+		#region Methods
+
+		protected void FetchHtml()
+		{
+			UseHtml = true;
+			htmlDoc = custom ? GameList.FetchHtmlGameList(customUrl) : GameList.FetchHtmlGameList(SteamId);
+		}
+
+		protected void FetchXml()
+		{
+			UseHtml = false;
+			doc = custom ? GameList.FetchXmlGameList(customUrl) : GameList.FetchXmlGameList(SteamId);
+		}
+
+		protected void FetchXmlPref()
+		{
+			try
+			{
+				FetchXml();
+				return;
+			}
+			catch (Exception) { }
+
+			Failover = true;
+			FetchHtml();
+		}
+
+		protected override void Finish()
+		{
+			if (Canceled || Error != null || (UseHtml ? htmlDoc == null : doc == null))
+			{
+				return;
+			}
+
+			SetText(GlobalStrings.CDlgFetch_FinishingDownload);
+			if (UseHtml)
+			{
+				Fetched = data.IntegrateHtmlGameList(htmlDoc, overwrite, ignore, out int newItems);
+				Added = newItems;
+			}
+			else
+			{
+				Fetched = data.IntegrateXmlGameList(doc, overwrite, ignore, out int newItems);
+				Added = newItems;
+			}
+
+			OnJobCompletion();
+		}
+
+		protected override void RunProcess()
+		{
+			Added = 0;
+			Fetched = 0;
+			switch (Settings.Instance.ListSource)
+			{
+				case GameListSource.XmlPreferred:
+					FetchXmlPref();
+					break;
+				case GameListSource.XmlOnly:
+					FetchXml();
+					break;
+				case GameListSource.WebsiteOnly:
+					FetchHtml();
+					break;
+			}
+
+			OnThreadCompletion();
+		}
+
+		#endregion
+	}
 }

@@ -1,6 +1,6 @@
 ﻿#region License
 
-//     This file (AppTypes.cs) is part of Depressurizer.
+//     This file (AppInfoNode.cs) is part of Depressurizer.
 //     Copyright (C) 2018  Martijn Vegter
 // 
 //     This program is free software: you can redistribute it and/or modify
@@ -20,25 +20,44 @@
 
 #region
 
-using System;
+using System.Collections.Generic;
 
 #endregion
 
-namespace Depressurizer.Core.Enums
+namespace Depressurizer.Core.Models
 {
-	[Flags]
-	public enum AppTypes
+	/// <summary>
+	///     AppInfo Node
+	/// </summary>
+	public sealed class AppInfoNode
 	{
-		Application = 1,
-		Demo = 1 << 1,
-		DLC = 1 << 2,
-		Game = 1 << 3,
-		Media = 1 << 4,
-		Tool = 1 << 5,
-		Other = 1 << 6,
-		Unknown = 1 << 7,
-		InclusionNormal = Application | Game,
-		InclusionUnknown = InclusionNormal | Unknown,
-		InclusionAll = (1 << 8) - 1
+		#region Constructors and Destructors
+
+		public AppInfoNode() { }
+
+		public AppInfoNode(string value)
+		{
+			Value = value;
+		}
+
+		#endregion
+
+		#region Public Properties
+
+		public Dictionary<string, AppInfoNode> Items { get; set; } = new Dictionary<string, AppInfoNode>();
+
+		public string Value { get; set; } = null;
+
+		#endregion
+
+		#region Public Indexers
+
+		public AppInfoNode this[string index]
+		{
+			get => Items[index];
+			set => Items[index] = value;
+		}
+
+		#endregion
 	}
 }

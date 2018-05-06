@@ -95,7 +95,7 @@ namespace Depressurizer
 
 		#region Fields
 
-		[DefaultValue(AppTypes.Unknown)] public AppTypes AppType = AppTypes.Unknown;
+		[DefaultValue(Core.Enums.AppType.Unknown)] public AppType AppType = AppType.Unknown;
 
 		[XmlIgnore] public string Banner = null;
 
@@ -180,7 +180,7 @@ namespace Depressurizer
 			bool useAppInfoFields = other.LastAppInfoUpdate > LastAppInfoUpdate || LastAppInfoUpdate == 0 && other.LastStoreScrape >= LastStoreScrape;
 			bool useScrapeOnlyFields = other.LastStoreScrape >= LastStoreScrape;
 
-			if (other.AppType != AppTypes.Unknown && (AppType == AppTypes.Unknown || useAppInfoFields))
+			if (other.AppType != AppType.Unknown && (AppType == AppType.Unknown || useAppInfoFields))
 			{
 				AppType = other.AppType;
 			}
@@ -305,9 +305,9 @@ namespace Depressurizer
 		///     Scrapes the store page with this game entry's ID and updates this entry with the information found.
 		/// </summary>
 		/// <returns>The type determined during the scrape</returns>
-		public AppTypes ScrapeStore()
+		public AppType ScrapeStore()
 		{
-			AppTypes result = ScrapeStoreHelper(Id);
+			AppType result = ScrapeStoreHelper(Id);
 			SetTypeFromStoreScrape(result);
 			return result;
 		}
@@ -556,7 +556,7 @@ namespace Depressurizer
 		/// </summary>
 		/// <param name="id">The id of the store page to scrape</param>
 		/// <returns>The type determined during the scrape</returns>
-		private AppTypes ScrapeStoreHelper(int id)
+		private AppType ScrapeStoreHelper(int id)
 		{
 			Program.Logger.Verbose(GlobalStrings.GameDB_InitiatingStoreScrapeForGame, id);
 
@@ -607,15 +607,15 @@ namespace Depressurizer
 					{
 						// If we are redirected to the store front page
 						Program.Logger.Verbose(GlobalStrings.GameDB_ScrapingRedirectedToMainStorePage, id);
-						SetTypeFromStoreScrape(AppTypes.Unknown);
-						return AppTypes.Unknown;
+						SetTypeFromStoreScrape(AppType.Unknown);
+						return AppType.Unknown;
 					}
 
 					if (resp.ResponseUri.ToString() == resp.Headers[HttpResponseHeader.Location])
 					{
 						//If page redirects to itself
 						Program.Logger.Verbose(GlobalStrings.GameDB_RedirectsToItself, id);
-						return AppTypes.Unknown;
+						return AppType.Unknown;
 					}
 
 					req = GetSteamRequest(resp.Headers[HttpResponseHeader.Location]);
@@ -627,14 +627,14 @@ namespace Depressurizer
 				{
 					//If we got too many redirects
 					Program.Logger.Verbose(GlobalStrings.GameDB_TooManyRedirects, id);
-					return AppTypes.Unknown;
+					return AppType.Unknown;
 				}
 				else if (resp.ResponseUri.Segments.Length < 2)
 				{
 					// If we were redirected to the store front page
 					Program.Logger.Verbose(GlobalStrings.GameDB_ScrapingRedirectedToMainStorePage, id);
-					SetTypeFromStoreScrape(AppTypes.Unknown);
-					return AppTypes.Unknown;
+					SetTypeFromStoreScrape(AppType.Unknown);
+					return AppType.Unknown;
 				}
 				else if (resp.ResponseUri.Segments[1] == "agecheck/")
 				{
@@ -647,27 +647,27 @@ namespace Depressurizer
 						else
 						{
 							// If we got an age check without numeric id (shouldn't happen)
-							return AppTypes.Unknown;
+							return AppType.Unknown;
 						}
 					}
 					else
 					{
 						// If we got an age check with no redirect
 						Program.Logger.Verbose(GlobalStrings.GameDB_ScrapingAgeCheckNoRedirect, id);
-						return AppTypes.Unknown;
+						return AppType.Unknown;
 					}
 				}
 				else if (resp.ResponseUri.Segments[1] != "app/")
 				{
 					// Redirected outside of the app path
 					Program.Logger.Verbose(GlobalStrings.GameDB_ScrapingRedirectedToNonApp, id);
-					return AppTypes.Other;
+					return Core.Enums.AppType.Unknown;
 				}
 				else if (resp.ResponseUri.Segments.Length < 3)
 				{
 					// The URI ends with "/app/" ?
 					Program.Logger.Verbose(GlobalStrings.GameDB_Log_ScrapingNoAppId, id);
-					return AppTypes.Unknown;
+					return AppType.Unknown;
 				}
 				else if (resp.ResponseUri.Segments[2].TrimEnd('/') != id.ToString())
 				{
@@ -676,7 +676,7 @@ namespace Depressurizer
 					if (!int.TryParse(resp.ResponseUri.Segments[2].TrimEnd('/'), out redirectTarget))
 					{
 						// if new app id is an actual number
-						return AppTypes.Unknown;
+						return AppType.Unknown;
 					}
 				}
 
@@ -689,7 +689,7 @@ namespace Depressurizer
 				// Something went wrong with the download.
 				Program.Logger.Verbose(GlobalStrings.GameDB_ScrapingPageReadFailed, id, e.Message);
 				LastStoreScrape = oldTime;
-				return AppTypes.Unknown;
+				return AppType.Unknown;
 			}
 			finally
 			{
@@ -699,12 +699,12 @@ namespace Depressurizer
 				}
 			}
 
-			AppTypes result = AppTypes.Unknown;
+			AppType result = AppType.Unknown;
 
 			if (page.Contains("<title>Site Error</title>"))
 			{
 				Program.Logger.Verbose(GlobalStrings.GameDB_ScrapingReceivedSiteError, id);
-				result = AppTypes.Unknown;
+				result = AppType.Unknown;
 			}
 			else if (regGamecheck.IsMatch(page) || regSoftwarecheck.IsMatch(page))
 			{
@@ -716,25 +716,25 @@ namespace Depressurizer
 				if (regDLCcheck.IsMatch(page))
 				{
 					Program.Logger.Verbose(GlobalStrings.GameDB_ScrapingParsedDLC, id, string.Join(",", Genres));
-					result = AppTypes.DLC;
+					result = AppType.DLC;
 				}
 				else
 				{
 					Program.Logger.Verbose(GlobalStrings.GameDB_ScrapingParsed, id, string.Join(",", Genres));
-					result = regSoftwarecheck.IsMatch(page) ? AppTypes.Application : AppTypes.Game;
+					result = regSoftwarecheck.IsMatch(page) ? AppType.Application : AppType.Game;
 				}
 			}
 			else
 			{
 				// The URI is right, but it didn't pass the regex check
 				Program.Logger.Verbose(GlobalStrings.GameDB_ScrapingCouldNotParse, id);
-				result = AppTypes.Unknown;
+				result = AppType.Unknown;
 			}
 
 			if (redirectTarget != -1)
 			{
 				ParentId = redirectTarget;
-				result = AppTypes.Unknown;
+				result = AppType.Unknown;
 			}
 
 			return result;
@@ -745,9 +745,9 @@ namespace Depressurizer
 		///     isn't overwritten with worse data.
 		/// </summary>
 		/// <param name="typeFromStore">Type found from the store scrape</param>
-		private void SetTypeFromStoreScrape(AppTypes typeFromStore)
+		private void SetTypeFromStoreScrape(AppType typeFromStore)
 		{
-			if (AppType == AppTypes.Unknown || typeFromStore != AppTypes.Unknown && LastAppInfoUpdate == 0)
+			if (AppType == AppType.Unknown || typeFromStore != AppType.Unknown && LastAppInfoUpdate == 0)
 			{
 				AppType = typeFromStore;
 			}

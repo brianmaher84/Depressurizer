@@ -21,9 +21,9 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using Depressurizer;
+using Depressurizer.Core.Helpers;
 
-namespace Rallion
+namespace Depressurizer
 {
     delegate DialogResult DLG_MessageBox(string text);
 
@@ -81,9 +81,12 @@ namespace Rallion
         /// </summary>
         public static void InitializeHandler()
         {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Application.ThreadException += Application_ThreadException;
-        }
+	        AppDomain.CurrentDomain.UnhandledException += SentryLogger.OnUnhandledException;
+			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			
+	        Application.ThreadException += SentryLogger.OnThreadException;
+			Application.ThreadException += Application_ThreadException;
+		}
 
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
