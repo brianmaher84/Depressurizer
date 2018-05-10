@@ -35,13 +35,13 @@ namespace Depressurizer
             lblVersion.Text += Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             int oldLen = lnkHomepage.Text.Length;
-            lnkHomepage.Text += Properties.Resources.DepressurizerHomepage;
+            lnkHomepage.Text += Properties.Constants.DepressurizerHomepage;
             lnkHomepage.LinkArea = new LinkArea(oldLen, lnkHomepage.Text.Length - oldLen);
         }
 
         private void lnkHomepage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(Properties.Resources.DepressurizerHomepage);
+            Process.Start(Properties.Constants.DepressurizerHomepage);
         }
 
         private void lnkLicense_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

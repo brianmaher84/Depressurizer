@@ -18,10 +18,12 @@ along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Depressurizer.Core;
 using Depressurizer.Core.Enums;
+using Depressurizer.Dialogs;
 using Rallion;
 
 namespace Depressurizer
@@ -205,7 +207,7 @@ namespace Depressurizer
         {
             try
             {
-                string path = string.Format(Properties.Resources.AppInfoPath, Settings.Instance.SteamPath);
+                string path = string.Format(Properties.Constants.AppInfoPath, Settings.Instance.SteamPath);
                 int updated = Program.GameDB.UpdateFromAppInfo(path);
                 if (updated > 0) UnsavedChanges = true;
                 RebuildDisplayList();
@@ -389,41 +391,41 @@ namespace Depressurizer
         /// <param name="gamesToScrape">Queue of games to scrape</param>
         private void ScrapeGames(Queue<int> gamesToScrape)
         {
-            if (gamesToScrape.Count > 0)
-            {
-                DbScrapeDlg dlg = new DbScrapeDlg(gamesToScrape);
-                DialogResult res = dlg.ShowDialog();
+	        if (gamesToScrape.Count <= 0)
+	        {
+		        AddStatusMsg(GlobalStrings.DBEditDlg_NoGamesToScrape);
+		        return;
+	        }
 
-                if (dlg.Error != null)
-                {
-                    AddStatusMsg(GlobalStrings.DBEditDlg_ErrorUpdatingGames);
-                    MessageBox.Show(string.Format(GlobalStrings.DBEditDlg_ErrorWhileUpdatingGames, dlg.Error.Message),
-                        GlobalStrings.DBEditDlg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+	        using (ScrapeDialog dialog = new ScrapeDialog(gamesToScrape))
+	        {
+		        DialogResult result = dialog.ShowDialog();
 
-                if (res == DialogResult.Cancel)
-                {
-                    AddStatusMsg(GlobalStrings.DBEditDlg_UpdateCanceled);
-                }
-                else if (res == DialogResult.Abort)
-                {
-                    AddStatusMsg(string.Format(GlobalStrings.DBEditDlg_AbortedUpdate, dlg.JobsCompleted,
-                        dlg.JobsTotal));
-                }
-                else
-                {
-                    AddStatusMsg(string.Format(GlobalStrings.DBEditDlg_UpdatedEntries, dlg.JobsCompleted));
-                }
-                if (dlg.JobsCompleted > 0)
-                {
-                    UnsavedChanges = true;
-                    RebuildDisplayList();
-                }
-            }
-            else
-            {
-                AddStatusMsg(GlobalStrings.DBEditDlg_NoGamesToScrape);
-            }
+		        if (dialog.Error != null)
+		        {
+			        AddStatusMsg(GlobalStrings.DBEditDlg_ErrorUpdatingGames);
+			        MessageBox.Show(string.Format(GlobalStrings.DBEditDlg_ErrorWhileUpdatingGames, dialog.Error.Message), GlobalStrings.DBEditDlg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+		        }
+
+		        if (result == DialogResult.Cancel)
+		        {
+			        AddStatusMsg(GlobalStrings.DBEditDlg_UpdateCanceled);
+		        }
+		        else if (result == DialogResult.Abort)
+		        {
+			        AddStatusMsg(string.Format(GlobalStrings.DBEditDlg_AbortedUpdate, dialog.CompletedJobs, dialog.TotalJobs));
+		        }
+		        else
+		        {
+			        AddStatusMsg(string.Format(GlobalStrings.DBEditDlg_UpdatedEntries, dialog.CompletedJobs));
+		        }
+
+		        if (dialog.CompletedJobs > 0)
+		        {
+			        UnsavedChanges = true;
+			        RebuildDisplayList();
+		        }
+	        }
         }
 
         #endregion

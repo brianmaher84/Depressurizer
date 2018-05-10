@@ -61,200 +61,57 @@ namespace Depressurizer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}\appcache\appinfo.vdf.
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static string AppInfoPath {
+        internal static System.Drawing.Icon Depressurizer {
             get {
-                return ResourceManager.GetString("AppInfoPath", resourceCulture);
+                object obj = ResourceManager.GetObject("Depressurizer", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Auto-Categorize ({0} Games).
+        ///   Looks up a localized string similar to Applying Data....
         /// </summary>
-        internal static string AutoCat_ButtonLabel {
+        internal static string ScrapeDialog_ApplyingData {
             get {
-                return ResourceManager.GetString("AutoCat_ButtonLabel", resourceCulture);
+                return ResourceManager.GetString("ScrapeDialog_ApplyingData", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}\userdata\{1}\7\remote\sharedconfig.vdf.
+        ///   Looks up a localized string similar to Scraping Apps: {0} / {1} Completed.
         /// </summary>
-        internal static string ConfigFilePath {
+        internal static string ScrapeDialog_Status {
             get {
-                return ResourceManager.GetString("ConfigFilePath", resourceCulture);
+                return ResourceManager.GetString("ScrapeDialog_Status", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://github.com/Depressurizer/depressurizer.
+        ///   Looks up a localized string similar to Time Left:.
         /// </summary>
-        internal static string DepressurizerHomepage {
+        internal static string ScrapeDialog_TimeLeft {
             get {
-                return ResourceManager.GetString("DepressurizerHomepage", resourceCulture);
+                return ResourceManager.GetString("ScrapeDialog_TimeLeft", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}\Game Banners\{1}.jpg.
+        ///   Looks up a localized string similar to Scraping apps....
         /// </summary>
-        internal static string GameBannerPath {
+        internal static string ScrapeDialog_Title {
             get {
-                return ResourceManager.GetString("GameBannerPath", resourceCulture);
+                return ResourceManager.GetString("ScrapeDialog_Title", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}\userdata\{1}\config\localconfig.vdf.
+        ///   Looks up a localized string similar to Unknown.
         /// </summary>
-        internal static string LocalConfigPath {
+        internal static string ScrapeDialog_Unknown {
             get {
-                return ResourceManager.GetString("LocalConfigPath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}\appcache\packageinfo.vdf.
-        /// </summary>
-        internal static string PackageInfoPath {
-            get {
-                return ResourceManager.GetString("PackageInfoPath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}\userdata\{1}\760\screenshots.vdf.
-        /// </summary>
-        internal static string ScreenshotsFilePath {
-            get {
-                return ResourceManager.GetString("ScreenshotsFilePath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0}\userdata\{1}\config\shortcuts.vdf.
-        /// </summary>
-        internal static string ShortCutsFilePath {
-            get {
-                return ResourceManager.GetString("ShortCutsFilePath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://steamcommunity.com/id/{0}/games?tab=all.
-        /// </summary>
-        internal static string UrlCustomGameListHtml {
-            get {
-                return ResourceManager.GetString("UrlCustomGameListHtml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://steamcommunity.com/id/{0}/games?tab=all&amp;xml=1.
-        /// </summary>
-        internal static string UrlCustomGameListXml {
-            get {
-                return ResourceManager.GetString("UrlCustomGameListXml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://steamcommunity.com/id/{0}?xml=1.
-        /// </summary>
-        internal static string UrlCustomProfileXml {
-            get {
-                return ResourceManager.GetString("UrlCustomProfileXml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://steamcdn-a.akamaihd.net/steam/apps/{0}/capsule_sm_120.jpg.
-        /// </summary>
-        internal static string UrlGameBanner {
-            get {
-                return ResourceManager.GetString("UrlGameBanner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://steamcommunity.com/profiles/{0}/games?tab=all.
-        /// </summary>
-        internal static string UrlGameListHtml {
-            get {
-                return ResourceManager.GetString("UrlGameListHtml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://steamcommunity.com/profiles/{0}/games?tab=all&amp;xml=1.
-        /// </summary>
-        internal static string UrlGameListXml {
-            get {
-                return ResourceManager.GetString("UrlGameListXml", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://www.howlongtobeatsteam.com/api/games/library/cached/all.
-        /// </summary>
-        internal static string UrlHLTBAll {
-            get {
-                return ResourceManager.GetString("UrlHLTBAll", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://api.github.com/repos/Depressurizer/depressurizer/releases/latest.
-        /// </summary>
-        internal static string UrlLatestRelease {
-            get {
-                return ResourceManager.GetString("UrlLatestRelease", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://store.steampowered.com/curators/ajaxgetcuratorrecommendations/{0}/?query=&amp;start={1}&amp;count=50.
-        /// </summary>
-        internal static string UrlSteamCuratorRecommendations {
-            get {
-                return ResourceManager.GetString("UrlSteamCuratorRecommendations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://steamcommunity.com/profiles/{0}?xml=1.
-        /// </summary>
-        internal static string UrlSteamProfile {
-            get {
-                return ResourceManager.GetString("UrlSteamProfile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://store.steampowered.com/.
-        /// </summary>
-        internal static string UrlSteamStore {
-            get {
-                return ResourceManager.GetString("UrlSteamStore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to http://store.steampowered.com/app/{0}/.
-        /// </summary>
-        internal static string UrlSteamStoreApp {
-            get {
-                return ResourceManager.GetString("UrlSteamStoreApp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /profile/avatarIcon.
-        /// </summary>
-        internal static string XmlNodeAvatar {
-            get {
-                return ResourceManager.GetString("XmlNodeAvatar", resourceCulture);
+                return ResourceManager.GetString("ScrapeDialog_Unknown", resourceCulture);
             }
         }
     }

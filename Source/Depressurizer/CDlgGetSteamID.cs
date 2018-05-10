@@ -45,7 +45,7 @@ namespace Depressurizer
 
             try
             {
-                string url = string.Format(Properties.Resources.UrlCustomProfileXml, customUrlName);
+                string url = string.Format(Properties.Constants.UrlCustomProfileXml, customUrlName);
                 Program.Logger.Info(GlobalStrings.CDlgGetSteamID_AttemptingDownloadXMLProfile,
                     customUrlName, url);
                 WebRequest req = HttpWebRequest.Create(url);

@@ -34,6 +34,7 @@ using System.Xml.Serialization;
 using Depressurizer.Core;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
+using Depressurizer.Dialogs;
 using Depressurizer.Properties;
 using Newtonsoft.Json.Linq;
 using Rallion;
@@ -467,19 +468,27 @@ namespace Depressurizer
 			}
 
 			//Update DB with data in correct language
-			Queue<int> gamesToUpdate = new Queue<int>();
-			if (FormMain.CurrentProfile != null)
+
+			if (FormMain.CurrentProfile == null)
 			{
-				foreach (GameInfo game in FormMain.CurrentProfile.GameData.Games.Values)
+				Save("GameDB.xml.gz");
+				return;
+			}
+
+			SortedSet<int> appIds = new SortedSet<int>();
+			foreach (GameInfo game in FormMain.CurrentProfile.GameData.Games.Values)
+			{
+				if (game.Id <= 0)
 				{
-					if (game.Id > 0)
-					{
-						gamesToUpdate.Enqueue(game.Id);
-					}
+					continue;
 				}
 
-				DbScrapeDlg scrapeDlg = new DbScrapeDlg(gamesToUpdate);
-				scrapeDlg.ShowDialog();
+				appIds.Add(game.Id);
+			}
+
+			using (ScrapeDialog dialog = new ScrapeDialog(appIds))
+			{
+				dialog.ShowDialog();
 			}
 
 			Save("GameDB.xml.gz");
@@ -963,7 +972,7 @@ namespace Depressurizer
 			using (WebClient wc = new WebClient())
 			{
 				wc.Encoding = Encoding.UTF8;
-				string json = wc.DownloadString(Resources.UrlHLTBAll);
+				string json = wc.DownloadString(Constants.UrlHLTBAll);
 				JObject parsedJson = JObject.Parse(json);
 				dynamic games = parsedJson.SelectToken("Games");
 				foreach (dynamic g in games)

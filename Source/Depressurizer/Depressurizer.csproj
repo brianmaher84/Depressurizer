@@ -48,7 +48,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationIcon>depressurizer_icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Depressurizer.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -201,6 +201,15 @@
     <Compile Include="CDlgHltb.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Dialogs\CancelableDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\CancelableDialog.Designer.cs">
+      <DependentUpon>CancelableDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ScrapeDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="DlgAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -240,6 +249,7 @@
     <Compile Include="GameBanners.cs" />
     <Compile Include="GameDBEntry.cs" />
     <Compile Include="GameDBEntrySorter.cs" />
+    <Compile Include="GameList.cs" />
     <Compile Include="GlobalStrings.nl.Designer.cs">
       <DependentUpon>GlobalStrings.nl.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -253,6 +263,12 @@
     </Compile>
     <Compile Include="ListViewComparer.cs" />
     <Compile Include="PackageInfo.cs" />
+    <Compile Include="ProfileAccessException.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Utility.cs" />
     <Compile Include="GlobalStrings.es.Designer.cs">
       <DependentUpon>GlobalStrings.es.resx</DependentUpon>
@@ -324,7 +340,7 @@
     <Compile Include="Lib\DlgGetString.Designer.cs">
       <DependentUpon>DlgGetString.cs</DependentUpon>
     </Compile>
-    <Compile Include="GameData.cs" />
+    <Compile Include="GameInfo.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -340,10 +356,10 @@
     <Compile Include="Profile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Include="Properties\Constants.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+      <DependentUpon>Constants.resx</DependentUpon>
     </Compile>
     <Compile Include="DlgSteamPath.cs">
       <SubType>Form</SubType>
@@ -407,6 +423,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DBEdit\DlgGameDBEntry.uk.resx">
       <DependentUpon>DlgGameDBEntry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\CancelableDialog.resx">
+      <DependentUpon>CancelableDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DlgAbout.resx">
       <DependentUpon>DlgAbout.cs</DependentUpon>
@@ -606,16 +625,18 @@
     <EmbeddedResource Include="MainForm.uk.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Include="Properties\Constants.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>Constants.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DlgSteamPath.resx">
       <DependentUpon>DlgSteamPath.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.ru.resx" />
-    <EmbeddedResource Include="Properties\Resources.uk.resx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
@@ -642,27 +663,26 @@
   <ItemGroup>
     <PublishFile Include="Depressurizer.exe.config">
       <Visible>False</Visible>
+      <PublishState>Auto</PublishState>
+      <IncludeHash>False</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Auto</PublishState>
-      <IncludeHash>False</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="Depressurizer.exe.manifest">
       <Visible>False</Visible>
+      <PublishState>Auto</PublishState>
+      <IncludeHash>False</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Auto</PublishState>
-      <IncludeHash>False</IncludeHash>
       <FileType>ManifestEntryPoint</FileType>
     </PublishFile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="depressurizer_icon.ico" />
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -688,7 +708,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="VdfFile\" />
+    <None Include="Resources\Depressurizer.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

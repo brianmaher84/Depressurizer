@@ -40,6 +40,7 @@ using BrightIdeasSoftware;
 using Depressurizer.Core;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
+using Depressurizer.Dialogs;
 using Depressurizer.Properties;
 using MaterialSkin;
 using MaterialSkin.Controls;
@@ -493,19 +494,19 @@ namespace Depressurizer
 			int updated = 0;
 
 			// List of games not found in database or that have old data, so we can try to scrape data for them
-			Queue<int> notInDbOrOldData = new Queue<int>();
+			SortedSet<int> notInDbOrOldData = new SortedSet<int>();
 			int oldDbDataCount = 0;
 			int notInDbCount = 0;
 			foreach (GameInfo game in gamesToUpdate)
 			{
 				if (game.Id > 0 && (!Program.GameDB.Contains(game.Id) || Program.GameDB.Games[game.Id].LastStoreScrape == 0))
 				{
-					notInDbOrOldData.Enqueue(game.Id);
+					notInDbOrOldData.Add(game.Id);
 					notInDbCount++;
 				}
 				else if (game.Id > 0 && Utility.GetCurrentUTime() > Program.GameDB.Games[game.Id].LastStoreScrape + Settings.Instance.ScrapePromptDays * 86400) //86400 seconds in a day
 				{
-					notInDbOrOldData.Enqueue(game.Id);
+					notInDbOrOldData.Add(game.Id);
 					oldDbDataCount++;
 				}
 			}
@@ -524,21 +525,26 @@ namespace Depressurizer
 				message += ". " + GlobalStrings.MainForm_ScrapeNow;
 				if (MessageBox.Show(message, GlobalStrings.DBEditDlg_Confirm, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
 				{
-					DbScrapeDlg scrapeDlg = new DbScrapeDlg(notInDbOrOldData);
-					DialogResult scrapeRes = scrapeDlg.ShowDialog();
+					using (ScrapeDialog dialog = new ScrapeDialog(notInDbOrOldData))
+					{
 
-					if (scrapeRes == DialogResult.Cancel)
-					{
-						AddStatus(string.Format(GlobalStrings.MainForm_CanceledDatabaseUpdate));
-					}
-					else
-					{
-						AddStatus(string.Format(GlobalStrings.MainForm_UpdatedDatabaseEntries, scrapeDlg.JobsCompleted));
-						if (scrapeDlg.JobsCompleted > 0 && Settings.Instance.AutoSaveDatabase)
+						DialogResult result = dialog.ShowDialog();
+
+						if (result == DialogResult.Cancel)
 						{
-							SaveGameDB();
+							AddStatus(string.Format(GlobalStrings.MainForm_CanceledDatabaseUpdate));
+						}
+						else
+						{
+							AddStatus(string.Format(GlobalStrings.MainForm_UpdatedDatabaseEntries, dialog.CompletedJobs));
+							if (dialog.CompletedJobs > 0 && Settings.Instance.AutoSaveDatabase)
+							{
+								SaveGameDB();
+							}
 						}
 					}
+
+					
 				}
 
 				Cursor.Current = Cursors.WaitCursor;
@@ -753,7 +759,7 @@ namespace Depressurizer
 				using (WebClient wc = new WebClient())
 				{
 					wc.Headers.Set("User-Agent", "Depressurizer");
-					string json = wc.DownloadString(Resources.UrlLatestRelease);
+					string json = wc.DownloadString(Constants.UrlLatestRelease);
 					JObject parsedJson = JObject.Parse(json);
 					githubVersion = new Version(((string) parsedJson.SelectToken("tag_name")).Replace("v", ""));
 					url = (string) parsedJson.SelectToken("html_url");
@@ -1536,7 +1542,7 @@ namespace Depressurizer
 
 			lstGames.BuildList();
 
-			mbtnAutoCategorize.Text = string.Format(Resources.AutoCat_ButtonLabel, AutoCatGameCount());
+			mbtnAutoCategorize.Text = string.Format(Constants.AutoCat_ButtonLabel, AutoCatGameCount());
 
 			Cursor = Cursors.Default;
 		}
@@ -2730,7 +2736,7 @@ namespace Depressurizer
 
 			// Add game banner to ID column
 			GameInfo g = (GameInfo) e.Model;
-			string bannerFile = string.Format(Resources.GameBannerPath, Path.GetDirectoryName(Application.ExecutablePath), g.Id);
+			string bannerFile = string.Format(Constants.GameBannerPath, Path.GetDirectoryName(Application.ExecutablePath), g.Id);
 			if (!File.Exists(bannerFile))
 			{
 				return;
@@ -2896,7 +2902,7 @@ namespace Depressurizer
 				if (webBrowser1.Visible)
 				{
 					webBrowser1.ScriptErrorsSuppressed = true;
-					webBrowser1.Navigate(string.Format(Resources.UrlSteamStoreApp + "?l=" + storeLanguage, g.Id));
+					webBrowser1.Navigate(string.Format(Constants.UrlSteamStoreApp + "?l=" + storeLanguage, g.Id));
 				}
 			}
 			else if (webBrowser1.Visible)
@@ -2907,12 +2913,12 @@ namespace Depressurizer
 					{
 						GameInfo g = tlstGames.Objects[0];
 						webBrowser1.ScriptErrorsSuppressed = true;
-						webBrowser1.Navigate(string.Format(Resources.UrlSteamStoreApp + "?l=" + storeLanguage, g.Id));
+						webBrowser1.Navigate(string.Format(Constants.UrlSteamStoreApp + "?l=" + storeLanguage, g.Id));
 					}
 					else
 					{
 						webBrowser1.ScriptErrorsSuppressed = true;
-						webBrowser1.Navigate(Resources.UrlSteamStore + "?l=" + storeLanguage);
+						webBrowser1.Navigate(Constants.UrlSteamStore + "?l=" + storeLanguage);
 					}
 				}
 				catch { }
@@ -2926,7 +2932,7 @@ namespace Depressurizer
 			UpdateEnabledStatesForGames();
 			UpdateGameCheckStates();
 			UpdateAutoCatSelected_StatusMessage();
-			mbtnAutoCategorize.Text = string.Format(Resources.AutoCat_ButtonLabel, AutoCatGameCount());
+			mbtnAutoCategorize.Text = string.Format(Constants.AutoCat_ButtonLabel, AutoCatGameCount());
 			Cursor.Current = Cursors.Default;
 		}
 
@@ -3187,7 +3193,7 @@ namespace Depressurizer
 		private void mchkAutoCatSelected_CheckedChanged(object sender, EventArgs e)
 		{
 			UpdateAutoCatSelected_StatusMessage();
-			mbtnAutoCategorize.Text = string.Format(Resources.AutoCat_ButtonLabel, AutoCatGameCount());
+			mbtnAutoCategorize.Text = string.Format(Constants.AutoCat_ButtonLabel, AutoCatGameCount());
 		}
 
 		private void mchkBrowser_CheckedChanged(object sender, EventArgs e)
@@ -3301,7 +3307,7 @@ namespace Depressurizer
 
 		private void menu_Profile_Restore_Config_Click(object sender, EventArgs e)
 		{
-			string sharedconfigPath = Path.GetDirectoryName(string.Format(Resources.ConfigFilePath, Settings.Instance.SteamPath, Profile.ID64toDirName(CurrentProfile.SteamID64)));
+			string sharedconfigPath = Path.GetDirectoryName(string.Format(Constants.ConfigFilePath, Settings.Instance.SteamPath, Profile.ID64toDirName(CurrentProfile.SteamID64)));
 			DlgRestore restore = new DlgRestore(sharedconfigPath);
 
 			DialogResult res = restore.ShowDialog();
@@ -4227,7 +4233,7 @@ namespace Depressurizer
 		{
 			try
 			{
-				int num = Program.GameDB.UpdateFromAppInfo(string.Format(Resources.AppInfoPath, Settings.Instance.SteamPath));
+				int num = Program.GameDB.UpdateFromAppInfo(string.Format(Constants.AppInfoPath, Settings.Instance.SteamPath));
 				AddStatus(string.Format(GlobalStrings.MainForm_Status_AppInfoAutoupdate, num));
 				if (num > 0 && Settings.Instance.AutoSaveDatabase)
 				{

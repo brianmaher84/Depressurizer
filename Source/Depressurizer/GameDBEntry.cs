@@ -596,14 +596,14 @@ namespace Depressurizer
 					}
 				}
 
-				HttpWebRequest req = GetSteamRequest(string.Format(Resources.UrlSteamStoreApp + "?l=" + storeLanguage, id));
+				HttpWebRequest req = GetSteamRequest(string.Format(Constants.UrlSteamStoreApp + "?l=" + storeLanguage, id));
 				resp = (HttpWebResponse) req.GetResponse();
 
 				int count = 0;
 				while (resp.StatusCode == HttpStatusCode.Found && count < 5)
 				{
 					resp.Close();
-					if (resp.Headers[HttpResponseHeader.Location] == Resources.UrlSteamStore)
+					if (resp.Headers[HttpResponseHeader.Location] == Constants.UrlSteamStore)
 					{
 						// If we are redirected to the store front page
 						Program.Logger.Verbose(GlobalStrings.GameDB_ScrapingRedirectedToMainStorePage, id);

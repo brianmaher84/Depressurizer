@@ -266,8 +266,8 @@ namespace Depressurizer
 
         public static bool GrabBanner(int id)
         {
-            string bannerURL = string.Format(Properties.Resources.UrlGameBanner, id);
-            string bannerPath = string.Format(Properties.Resources.GameBannerPath,
+            string bannerURL = string.Format(Properties.Constants.UrlGameBanner, id);
+            string bannerPath = string.Format(Properties.Constants.GameBannerPath,
                 Path.GetDirectoryName(Application.ExecutablePath), id);
 
             try
@@ -347,7 +347,7 @@ namespace Depressurizer
         /// <param name="appId"></param>
         public static void LaunchStorePage(int appId)
         {
-            System.Diagnostics.Process.Start(string.Format(Properties.Resources.UrlSteamStoreApp, appId));
+            System.Diagnostics.Process.Start(string.Format(Properties.Constants.UrlSteamStoreApp, appId));
         }
 
         #endregion
