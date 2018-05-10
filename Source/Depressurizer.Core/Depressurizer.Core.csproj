@@ -72,6 +72,7 @@
     <Compile Include="Models\Filter.cs" />
     <Compile Include="Models\LanguageSupport.cs" />
     <Compile Include="Enums\ValueType.cs" />
+    <Compile Include="Models\PackageInfo.cs" />
     <Compile Include="Models\VDFNode.cs" />
     <Compile Include="Models\VRSupport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -274,7 +274,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ListViewComparer.cs" />
-    <Compile Include="PackageInfo.cs" />
     <Compile Include="ProfileAccessException.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
