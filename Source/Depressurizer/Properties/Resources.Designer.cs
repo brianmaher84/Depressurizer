@@ -116,6 +116,26 @@ namespace Depressurizer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Selected path doesn&apos;t contain the Steam executable!
+        ///Are you sure?.
+        /// </summary>
+        internal static string SteamPathDialog_PathDoesntContain {
+            get {
+                return ResourceManager.GetString("SteamPathDialog_PathDoesntContain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected path doesn&apos;t exist!
+        ///Are you sure?.
+        /// </summary>
+        internal static string SteamPathDialog_PathDoesntExist {
+            get {
+                return ResourceManager.GetString("SteamPathDialog_PathDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
         internal static string Warning {

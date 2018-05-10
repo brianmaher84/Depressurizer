@@ -211,6 +211,12 @@
     <Compile Include="Dialogs\ScrapeDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Dialogs\SteamPathDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\SteamPathDialog.Designer.cs">
+      <DependentUpon>SteamPathDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\WarnDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -363,12 +369,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Constants.resx</DependentUpon>
     </Compile>
-    <Compile Include="DlgSteamPath.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DlgSteamPath.Designer.cs">
-      <DependentUpon>DlgSteamPath.cs</DependentUpon>
-    </Compile>
     <Compile Include="CDlgUpdateProfile.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -428,6 +428,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\CancelableDialog.resx">
       <DependentUpon>CancelableDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SteamPathDialog.resx">
+      <DependentUpon>SteamPathDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\WarnDialog.resx">
       <DependentUpon>WarnDialog.cs</DependentUpon>
@@ -510,15 +513,6 @@
     <EmbeddedResource Include="DlgRestore.uk.resx">
       <DependentUpon>DlgRestore.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DlgSteamPath.nl.resx">
-      <DependentUpon>DlgSteamPath.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DlgSteamPath.ru.resx">
-      <DependentUpon>DlgSteamPath.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DlgSteamPath.uk.resx">
-      <DependentUpon>DlgSteamPath.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="GlobalStrings.nl.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>GlobalStrings.nl.Designer.cs</LastGenOutput>
@@ -560,9 +554,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DlgProfile.es.resx">
       <DependentUpon>DlgProfile.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DlgSteamPath.es.resx">
-      <DependentUpon>DlgSteamPath.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -634,9 +625,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Constants.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DlgSteamPath.resx">
-      <DependentUpon>DlgSteamPath.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

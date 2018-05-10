@@ -1710,7 +1710,7 @@ namespace Depressurizer
 			ClearStatus();
 			if (Settings.Instance.SteamPath == null)
 			{
-				DlgSteamPath dlg = new DlgSteamPath();
+				SteamPathDialog dlg = new SteamPathDialog();
 				dlg.ShowDialog();
 				Settings.Instance.SteamPath = dlg.Path;
 				Settings.Instance.Save();
