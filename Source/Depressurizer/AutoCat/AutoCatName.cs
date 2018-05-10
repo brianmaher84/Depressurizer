@@ -3,11 +3,10 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
-using Rallion;
 
 namespace Depressurizer
 {
-    public class AutoCatName : AutoCat
+	public class AutoCatName : AutoCat
     {
         public string Prefix { get; set; }
         public bool SkipThe { get; set; }

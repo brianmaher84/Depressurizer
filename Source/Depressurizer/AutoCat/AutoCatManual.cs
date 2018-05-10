@@ -19,17 +19,16 @@ along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using Rallion;
 using System.Xml.Serialization;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
 
 namespace Depressurizer
 {
-    /// <summary>
-    /// Autocategorization scheme that adds and removes manual categories.
-    /// </summary>
-    public class AutoCatManual : AutoCat
+	/// <summary>
+	/// Autocategorization scheme that adds and removes manual categories.
+	/// </summary>
+	public class AutoCatManual : AutoCat
     {
         public override AutoCatType AutoCatType
         {
@@ -99,7 +98,7 @@ namespace Depressurizer
         /// <summary>
         /// Prepares to categorize games. Prepares a list of genre categories to remove. Does nothing if removeothergenres is false.
         /// </summary>
-        public override void PreProcess(GameList games, GameDB db)
+        public override void PreProcess(GameList games, Database db)
         {
             base.PreProcess(games, db);
             gamelist = games;

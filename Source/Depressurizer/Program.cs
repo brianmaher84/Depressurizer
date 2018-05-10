@@ -24,7 +24,6 @@ using System;
 using System.Windows.Forms;
 using Depressurizer.Core;
 using Depressurizer.Core.Helpers;
-using Rallion;
 
 #endregion
 
@@ -34,7 +33,7 @@ namespace Depressurizer
 	{
 		#region Static Fields
 
-		public static GameDB GameDB;
+		public static Database Database;
 		public static Logger Logger => Logger.Instance;
 
 		#endregion

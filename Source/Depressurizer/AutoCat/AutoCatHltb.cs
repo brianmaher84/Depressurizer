@@ -19,14 +19,13 @@ along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using Rallion;
 using System.Xml.Serialization;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
 
 namespace Depressurizer
 {
-    public enum TimeType
+	public enum TimeType
     {
         Main,
         Extras,

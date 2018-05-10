@@ -22,14 +22,13 @@ using System.Xml;
 using System.Xml.Serialization;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
-using Rallion;
 
 namespace Depressurizer
 {
-    /// <summary>
-    /// Autocategorization scheme that adds developer and publisher categories.
-    /// </summary>
-    public class AutoCatDevPub : AutoCat
+	/// <summary>
+	/// Autocategorization scheme that adds developer and publisher categories.
+	/// </summary>
+	public class AutoCatDevPub : AutoCat
     {
         public override AutoCatType AutoCatType
         {
@@ -113,12 +112,12 @@ namespace Depressurizer
         /// <summary>
         /// Prepares to categorize games. Prepares a list of genre categories to remove. Does nothing if removeothergenres is false.
         /// </summary>
-        public override void PreProcess(GameList games, GameDB db)
+        public override void PreProcess(GameList games, Database db)
         {
             base.PreProcess(games, db);
             gamelist = games;
-            devList = Program.GameDB.CalculateSortedDevList(OwnedOnly ? gamelist : null, MinCount);
-            pubList = Program.GameDB.CalculateSortedPubList(OwnedOnly ? gamelist : null, MinCount);
+            devList = Program.Database.CalculateSortedDevList(OwnedOnly ? gamelist : null, MinCount);
+            pubList = Program.Database.CalculateSortedPubList(OwnedOnly ? gamelist : null, MinCount);
         }
 
         public override void DeProcess()

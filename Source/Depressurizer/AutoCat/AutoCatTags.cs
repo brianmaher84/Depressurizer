@@ -22,11 +22,10 @@ using System.Xml;
 using System.Xml.Serialization;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
-using Rallion;
 
 namespace Depressurizer
 {
-    public class AutoCatTags : AutoCat
+	public class AutoCatTags : AutoCat
     {
         public override AutoCatType AutoCatType
         {

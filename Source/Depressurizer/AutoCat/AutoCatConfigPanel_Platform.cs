@@ -16,11 +16,10 @@ You should have received a copy of the GNU General Public License
 along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 
 namespace Depressurizer
 {
-    public partial class AutoCatConfigPanel_Platform : AutoCatConfigPanel
+	public partial class AutoCatConfigPanel_Platform : AutoCatConfigPanel
     {
         public AutoCatConfigPanel_Platform()
         {

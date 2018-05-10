@@ -28,13 +28,12 @@ using System.Net.Cache;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using Depressurizer.Core;
 using Depressurizer.Core.Enums;
 using MaterialSkin.Controls;
 
 namespace Depressurizer
 {
-    public static class Utility
+	public static class Utility
     {
         #region File Backups
 

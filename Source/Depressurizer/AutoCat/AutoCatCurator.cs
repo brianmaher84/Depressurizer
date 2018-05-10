@@ -19,19 +19,15 @@ along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Serialization;
-using Depressurizer;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
-using Rallion;
 
 namespace Depressurizer
 {
-    public class AutoCatCurator : AutoCat
+	public class AutoCatCurator : AutoCat
     {
         public override AutoCatType AutoCatType
         {
@@ -85,7 +81,7 @@ namespace Depressurizer
             return new AutoCatCurator(this);
         }
 
-        public override void PreProcess(GameList games, GameDB db)
+        public override void PreProcess(GameList games, Database db)
         {
             this.games = games;
             this.db = db;

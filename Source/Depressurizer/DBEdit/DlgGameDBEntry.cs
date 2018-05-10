@@ -20,19 +20,20 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Depressurizer.Core.Enums;
+using Depressurizer.Core.Models;
 
 namespace Depressurizer
 {
     public partial class GameDBEntryDialog : Form
     {
-        public GameDBEntry Game;
+        public DatabaseEntry Game;
 
         private bool editMode;
 
         public GameDBEntryDialog()
             : this(null) { }
 
-        public GameDBEntryDialog(GameDBEntry game)
+        public GameDBEntryDialog(DatabaseEntry game)
         {
             InitializeComponent();
             Game = game;
@@ -53,7 +54,7 @@ namespace Depressurizer
             InitializeFields(Game);
         }
 
-        private void InitializeFields(GameDBEntry entry = null)
+        private void InitializeFields(DatabaseEntry entry = null)
         {
             if (entry == null)
             {
@@ -95,7 +96,7 @@ namespace Depressurizer
                 chkWebUpdate.Checked = Game.LastStoreScrape > 0;
                 chkAppInfoUpdate.Checked = Game.LastAppInfoUpdate > 0;
 
-                dateWeb.Value = Utility.GetDTFromUTime(Game.LastStoreScrape);
+                dateWeb.Value = DateTimeOffset.FromUnixTimeSeconds(Game.LastStoreScrape).DateTime;
                 dateAppInfo.Value = Utility.GetDTFromUTime(Game.LastAppInfoUpdate);
             }
         }
@@ -125,7 +126,7 @@ namespace Depressurizer
 
             if (Game == null)
             {
-                Game = new GameDBEntry();
+                Game = new DatabaseEntry();
                 Game.Id = id;
             }
 
@@ -135,13 +136,22 @@ namespace Depressurizer
             Game.Name = txtName.Text;
 
 
-            Game.Genres = SplitAndTrim(txtGenres.Text);
-            Game.Flags = SplitAndTrim(txtFlags.Text);
-            Game.Tags = SplitAndTrim(txtTags.Text);
-            Game.Developers = SplitAndTrim(txtDev.Text);
-            Game.Publishers = SplitAndTrim(txtPub.Text);
+            Game.Genres.Clear();
+		    Game.Genres.AddRange(SplitAndTrim(txtGenres.Text));
 
-            Game.TotalAchievements = (int) numAchievements.Value;
+            Game.Flags.Clear();
+            Game.Flags.AddRange(SplitAndTrim(txtFlags.Text));
+
+			Game.Tags.Clear();
+            Game.Tags.AddRange(SplitAndTrim(txtTags.Text));
+
+			Game.Developers.Clear();
+            Game.Developers.AddRange(SplitAndTrim(txtDev.Text));
+
+	        Game.Publishers.Clear();
+            Game.Publishers.AddRange(SplitAndTrim(txtPub.Text));
+
+			Game.TotalAchievements = (int) numAchievements.Value;
             Game.ReviewPositivePercentage = (int) numReviewScore.Value;
             Game.ReviewTotal = (int) numReviewCount.Value;
 

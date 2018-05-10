@@ -26,7 +26,6 @@ using System.Globalization;
 using System.Windows.Forms;
 using Depressurizer.Core;
 using Depressurizer.Core.Enums;
-using Rallion;
 using Enum = System.Enum;
 
 #endregion

@@ -26,6 +26,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Depressurizer.Core.Models;
 using Depressurizer.Properties;
 
 #endregion
@@ -37,7 +38,7 @@ namespace Depressurizer.Dialogs
 		#region Fields
 
 		private readonly List<int> _jobs;
-		private readonly List<GameDBEntry> _results = new List<GameDBEntry>();
+		private readonly List<DatabaseEntry> _results = new List<DatabaseEntry>();
 
 		private DateTime _start;
 
@@ -74,15 +75,15 @@ namespace Depressurizer.Dialogs
 
 			lock (SyncRoot)
 			{
-				foreach (GameDBEntry entry in _results)
+				foreach (DatabaseEntry entry in _results)
 				{
-					if (Program.GameDB.Contains(entry.Id))
+					if (Program.Database.Contains(entry.Id))
 					{
-						Program.GameDB.Games[entry.Id].MergeIn(entry);
+						Program.Database.Games[entry.Id].MergeIn(entry);
 					}
 					else
 					{
-						Program.GameDB.Games.Add(entry.Id, entry);
+						Program.Database.Games.Add(entry.Id, entry);
 					}
 				}
 			}
@@ -131,7 +132,7 @@ namespace Depressurizer.Dialogs
 				return;
 			}
 
-			GameDBEntry entry = new GameDBEntry
+			DatabaseEntry entry = new DatabaseEntry
 			{
 				Id = appId
 			};

@@ -20,11 +20,10 @@ using System;
 using System.Xml;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
-using Rallion;
 
 namespace Depressurizer
 {
-    public enum AutoCatYear_Grouping
+	public enum AutoCatYear_Grouping
     {
         None,
         Decade,

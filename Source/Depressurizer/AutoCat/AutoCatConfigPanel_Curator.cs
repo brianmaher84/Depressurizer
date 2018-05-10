@@ -18,12 +18,11 @@ along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Depressurizer
 {
-    public partial class AutoCatConfigPanel_Curator : AutoCatConfigPanel
+	public partial class AutoCatConfigPanel_Curator : AutoCatConfigPanel
     {
         public AutoCatConfigPanel_Curator()
         {

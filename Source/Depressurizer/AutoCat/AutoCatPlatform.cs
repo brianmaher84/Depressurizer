@@ -18,20 +18,12 @@ along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Serialization;
-using Depressurizer;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
-using Rallion;
 
 namespace Depressurizer
 {
-    public class AutoCatPlatform : AutoCat
+	public class AutoCatPlatform : AutoCat
     {
         public override AutoCatType AutoCatType
         {

@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using Depressurizer.Core.Models;
 
 namespace Depressurizer {
-	public class GameDBEntrySorter : IComparer<GameDBEntry>
+	public class GameDBEntrySorter : IComparer<DatabaseEntry>
 	{
 		public enum SortModes
 		{
@@ -30,7 +31,7 @@ namespace Depressurizer {
 			}
 		}
 
-		public int Compare(GameDBEntry a, GameDBEntry b)
+		public int Compare(DatabaseEntry a, DatabaseEntry b)
 		{
 			int res = 0;
 			switch (SortMode)
