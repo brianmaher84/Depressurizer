@@ -39,6 +39,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Depressurizer.Core;
 using Depressurizer.Core.Enums;
+using Depressurizer.Core.Helpers;
 using Depressurizer.Core.Models;
 using Depressurizer.Dialogs;
 using Depressurizer.Properties;
@@ -82,8 +83,19 @@ namespace Depressurizer
 
 		#region Fields
 
-		private readonly MaterialSkinManager materialSkinManager;
 		private readonly Color accent = Color.FromArgb(255, 0, 145, 234);
+		private readonly Color formColor = Color.FromArgb(255, 42, 42, 44);
+		private readonly Color headerFontColor = Color.FromArgb(255, 169, 167, 167);
+		private readonly Color listBackground = Color.FromArgb(255, 22, 22, 22);
+
+		private readonly MaterialSkinManager materialSkinManager;
+
+		private readonly Color primary = Color.FromArgb(255, 55, 71, 79);
+		private readonly Color primaryDark = Color.FromArgb(255, 38, 50, 56);
+		private readonly Color primaryLight = Color.FromArgb(255, 96, 125, 139);
+
+		private readonly StringBuilder statusBuilder = new StringBuilder();
+		private readonly Color textColor = Color.FromArgb(255, 255, 255, 255);
 		private Filter advFilter = new Filter(ADVANCED_FILTER);
 
 		// For getting game banners
@@ -99,9 +111,7 @@ namespace Depressurizer
 		private bool doubleClick;
 
 		private int dragOldCat;
-		private readonly Color formColor = Color.FromArgb(255, 42, 42, 44);
 		private Color headerCellColor = Color.FromArgb(255, 58, 58, 58);
-		private readonly Color headerFontColor = Color.FromArgb(255, 169, 167, 167);
 
 		private Color highlightCellColor = Color.FromArgb(255, 25, 55, 84);
 
@@ -109,7 +119,6 @@ namespace Depressurizer
 		private bool isDragging;
 
 		private object lastSelectedCat; // Stores last selected category to minimize game list refreshes
-		private readonly Color listBackground = Color.FromArgb(255, 22, 22, 22);
 		private Color menuColorDark = Color.FromArgb(255, 38, 50, 56);
 		private Color menuColorLight = Color.FromArgb(255, 55, 71, 79);
 		private Color menuHighlightText = Color.FromArgb(255, 255, 255, 234);
@@ -117,14 +126,7 @@ namespace Depressurizer
 
 		// Used to reload resources of main form while switching language
 		private int originalWidth, originalHeight, originalSplitDistanceMain, originalSplitDistanceSecondary, originalSplitDistanceBrowser;
-
-		private readonly Color primary = Color.FromArgb(255, 55, 71, 79);
 		private Color primaryCellColor = Color.FromArgb(255, 29, 29, 29);
-		private readonly Color primaryDark = Color.FromArgb(255, 38, 50, 56);
-		private readonly Color primaryLight = Color.FromArgb(255, 96, 125, 139);
-
-		private readonly StringBuilder statusBuilder = new StringBuilder();
-		private readonly Color textColor = Color.FromArgb(255, 255, 255, 255);
 
 		private TypedObjectListView<GameInfo> tlstGames;
 
@@ -179,6 +181,9 @@ namespace Depressurizer
 
 		#region Properties
 
+		private static Database Database => Database.Instance;
+		private static Logger Logger => Logger.Instance;
+
 		private bool AdvancedCategoryFilter => mchkAdvancedCategories.Checked;
 
 		#endregion
@@ -216,6 +221,31 @@ namespace Depressurizer
 		#endregion
 
 		#region Methods
+
+		private static void LoadDatabase()
+		{
+			try
+			{
+				if (Database.Load())
+				{
+					return;
+				}
+
+				using (WarnDialog dialog = new WarnDialog(Resources.Warning, Resources.Warning_DatabaseNotFound))
+				{
+					dialog.ShowDialog();
+				}
+			}
+			catch (Exception e)
+			{
+				using (WarnDialog dialog = new WarnDialog(Resources.Warning, Resources.Warning_DatabaseNotFound))
+				{
+					dialog.ShowDialog();
+				}
+
+				Logger.Exception("Exception during initial database load:", e);
+			}
+		}
 
 		/// <summary>
 		///     Adds the given category to all selected games.
@@ -527,7 +557,6 @@ namespace Depressurizer
 				{
 					using (ScrapeDialog dialog = new ScrapeDialog(notInDbOrOldData))
 					{
-
 						DialogResult result = dialog.ShowDialog();
 
 						if (result == DialogResult.Cancel)
@@ -543,8 +572,6 @@ namespace Depressurizer
 							}
 						}
 					}
-
-					
 				}
 
 				Cursor.Current = Cursors.WaitCursor;
@@ -1671,7 +1698,7 @@ namespace Depressurizer
 
 			InitializeObjectListView();
 
-			LoadGameDB();
+			LoadDatabase();
 
 			// Save original width and height
 			originalHeight = Height;
@@ -2424,36 +2451,6 @@ namespace Depressurizer
 				//}
 				g.LastPlayed = Utility.GetCurrentUTime();
 				Process.Start(g.Executable);
-			}
-		}
-
-		/// <summary>
-		///     Loads the database from disk. If the load fails, displays a message box and creates an empty DB.
-		/// </summary>
-		private void LoadGameDB()
-		{
-			try
-			{
-				Program.Database = new Database();
-				if (File.Exists("GameDB.xml.gz"))
-				{
-					Program.Database.Load("GameDB.xml.gz");
-				}
-				else if (File.Exists("GameDB.xml"))
-				{
-					Program.Database.Load("GameDB.xml");
-				}
-				else
-				{
-					MessageBox.Show(GlobalStrings.MainForm_ErrorLoadingGameDB + GlobalStrings.MainForm_GameDBFileNotExist);
-					Program.Logger.Warn(GlobalStrings.MainForm_GameDBFileNotExist);
-				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(GlobalStrings.MainForm_ErrorLoadingGameDB + ex.Message);
-				Program.Logger.Exception(GlobalStrings.MainForm_Log_ExceptionOnDBLoad, ex);
-				Program.Database = new Database();
 			}
 		}
 
@@ -3353,7 +3350,7 @@ namespace Depressurizer
 		{
 			DBEditDlg dlg = new DBEditDlg(CurrentProfile != null ? CurrentProfile.GameData : null);
 			dlg.ShowDialog();
-			LoadGameDB();
+			LoadDatabase();
 		}
 
 		private void menu_Tools_RemoveEmpty_Click(object sender, EventArgs e)

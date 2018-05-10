@@ -31,9 +31,9 @@ namespace Depressurizer
 {
 	internal static class Program
 	{
-		#region Static Fields
+		#region Public Properties
 
-		public static Database Database;
+		public static Database Database => Database.Instance;
 		public static Logger Logger => Logger.Instance;
 
 		#endregion
@@ -60,7 +60,7 @@ namespace Depressurizer
 
 			Settings.Load();
 
-			Logger.Info(GlobalStrings.Program_ProgramInitialized);
+			Logger.Info("Program initialized.");
 
 			Application.Run(new FormMain());
 		}
@@ -69,7 +69,7 @@ namespace Depressurizer
 		{
 			Settings.Save();
 
-			Logger.Info(GlobalStrings.Program_ProgramClosing);
+			Logger.Info("Program closing.");
 			Logger.Dispose();
 		}
 

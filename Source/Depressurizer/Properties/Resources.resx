@@ -136,4 +136,12 @@
   <data name="ScrapeDialog_Unknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Warning_DatabaseNotFound" xml:space="preserve">
+    <value>Error while loading database! Local categories and data will not be available!
+Database file does not exist!</value>
+    <comment> </comment>
+  </data>
 </root>

@@ -114,5 +114,24 @@ namespace Depressurizer.Properties {
                 return ResourceManager.GetString("ScrapeDialog_Unknown", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        internal static string Warning {
+            get {
+                return ResourceManager.GetString("Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while loading database! Local categories and data will not be available!
+        ///Database file does not exist!.
+        /// </summary>
+        internal static string Warning_DatabaseNotFound {
+            get {
+                return ResourceManager.GetString("Warning_DatabaseNotFound", resourceCulture);
+            }
+        }
     }
 }
