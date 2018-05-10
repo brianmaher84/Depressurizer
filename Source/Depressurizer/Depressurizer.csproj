@@ -273,7 +273,9 @@
     <Compile Include="Lib\ExtToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ListViewComparer.cs" />
+    <Compile Include="Models\CategorySort.cs" />
+    <Compile Include="Models\ListViewComparer.cs" />
+    <Compile Include="Models\ListCategoriesComparer.cs" />
     <Compile Include="ProfileAccessException.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

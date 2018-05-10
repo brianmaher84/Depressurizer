@@ -52,10 +52,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\AdvancedFilterState.cs" />
     <Compile Include="Enums\AppPlatforms.cs" />
     <Compile Include="Enums\AppType.cs" />
     <Compile Include="Enums\AutoCatResult.cs" />
     <Compile Include="Enums\AutoCatType.cs" />
+    <Compile Include="Enums\CategorySortMode.cs" />
     <Compile Include="Enums\GameListingSource.cs" />
     <Compile Include="Enums\PackageBillingType.cs" />
     <Compile Include="Enums\GameListSource.cs" />

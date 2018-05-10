@@ -42,6 +42,7 @@ using Depressurizer.Core.Enums;
 using Depressurizer.Core.Helpers;
 using Depressurizer.Core.Models;
 using Depressurizer.Dialogs;
+using Depressurizer.Models;
 using Depressurizer.Properties;
 using MaterialSkin;
 using MaterialSkin.Controls;
@@ -53,14 +54,6 @@ using Rallion;
 
 namespace Depressurizer
 {
-	public enum AdvancedFilterState
-	{
-		None = -1,
-		Allow = 0,
-		Require = 1,
-		Exclude = 2
-	}
-
 	public partial class FormMain : MaterialForm
 	{
 		#region Constants
@@ -1059,13 +1052,13 @@ namespace Depressurizer
 
 		private void countascendingToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			lstCategories.ListViewItemSorter = new lstCategoriesComparer(lstCategoriesComparer.categorySortMode.Count, SortOrder.Ascending);
+			lstCategories.ListViewItemSorter = new ListCategoriesComparer(CategorySortMode.Count, SortOrder.Ascending);
 			lstCategories.Sort();
 		}
 
 		private void countdescendingToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			lstCategories.ListViewItemSorter = new lstCategoriesComparer(lstCategoriesComparer.categorySortMode.Count, SortOrder.Descending);
+			lstCategories.ListViewItemSorter = new ListCategoriesComparer(CategorySortMode.Count, SortOrder.Descending);
 			lstCategories.Sort();
 		}
 
@@ -1528,7 +1521,7 @@ namespace Depressurizer
 			//if (sort)
 			if (lstCategories.ListViewItemSorter == null)
 			{
-				lstCategories.ListViewItemSorter = new lstCategoriesComparer(lstCategoriesComparer.categorySortMode.Name, SortOrder.Ascending);
+				lstCategories.ListViewItemSorter = new ListCategoriesComparer(CategorySortMode.Name, SortOrder.Ascending);
 			}
 
 			lstCategories.Sort();
@@ -3424,14 +3417,14 @@ namespace Depressurizer
 
 		private void nameascendingToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			lstCategories.ListViewItemSorter = new lstCategoriesComparer(lstCategoriesComparer.categorySortMode.Name, SortOrder.Ascending);
+			lstCategories.ListViewItemSorter = new ListCategoriesComparer(CategorySortMode.Name, SortOrder.Ascending);
 
 			lstCategories.Sort();
 		}
 
 		private void namedescendingToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			lstCategories.ListViewItemSorter = new lstCategoriesComparer(lstCategoriesComparer.categorySortMode.Name, SortOrder.Descending);
+			lstCategories.ListViewItemSorter = new ListCategoriesComparer(CategorySortMode.Name, SortOrder.Descending);
 			lstCategories.Sort();
 		}
 
@@ -4610,15 +4603,5 @@ namespace Depressurizer
 
 			#endregion
 		}
-	}
-
-	public class CategorySort
-	{
-		#region Fields
-
-		public int Column;
-		public SortOrder Order;
-
-		#endregion
 	}
 }
