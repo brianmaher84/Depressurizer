@@ -34,6 +34,7 @@ namespace Depressurizer
 		#region Public Properties
 
 		public static Database Database => Database.Instance;
+
 		public static Logger Logger => Logger.Instance;
 
 		#endregion

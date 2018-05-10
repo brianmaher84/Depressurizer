@@ -74,16 +74,21 @@ namespace Depressurizer.Core
 		private string _selectedFilter;
 
 		private bool _singleCatMode;
+
 		private int _splitBrowser;
+
 		private int _splitBrowserContainerWidth = 722;
 
 		private int _splitContainer;
+
 		private int _splitGame;
+
 		private int _splitGameContainerHeight = 510;
 
 		private StartupAction _startupAction = StartupAction.CreateProfile;
 
 		private string _steamPath = null;
+
 		private StoreLanguage _storeLanguage = StoreLanguage.windows;
 
 		private bool _updateAppInfoOnStart = true;

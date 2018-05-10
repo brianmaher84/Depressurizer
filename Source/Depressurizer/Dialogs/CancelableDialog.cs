@@ -179,6 +179,7 @@ namespace Depressurizer.Dialogs
 		}
 
 		protected virtual void Start() { }
+
 		protected virtual void UpdateText() { }
 
 		private void ButtonCancel_Click(object sender, EventArgs e)

@@ -36,12 +36,19 @@ namespace Depressurizer.Core.Models
 		#region Constants
 
 		private const string TypeIdString = "Filter";
+
 		private const string XmlNameAllow = "Allow";
+
 		private const string XmlNameExclude = "Exclude";
+
 		private const string XmlNameHidden = "Hidden";
+
 		private const string XmlNameName = "Name";
+
 		private const string XmlNameRequire = "Require";
+
 		private const string XmlNameUncategorized = "Uncategorized";
+
 		private const string XmlNameVR = "VR";
 
 		#endregion

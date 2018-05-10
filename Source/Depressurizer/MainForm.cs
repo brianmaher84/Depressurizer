@@ -59,9 +59,11 @@ namespace Depressurizer
 		#region Constants
 
 		private const string ADVANCED_FILTER = "ADVANCED_FILTER";
+
 		private const string BIG_DOWN = "{DOWN},{DOWN},{DOWN},{DOWN},{DOWN},{DOWN},{DOWN},{DOWN},{DOWN},{DOWN}";
 
 		private const string BIG_UP = "{UP},{UP},{UP},{UP},{UP},{UP},{UP},{UP},{UP},{UP}";
+
 		private const string EARLY_ACCESS = "Early Access";
 
 		private const int MAX_FILTER_STATE = 2;
@@ -77,24 +79,32 @@ namespace Depressurizer
 		#region Fields
 
 		private readonly Color accent = Color.FromArgb(255, 0, 145, 234);
+
 		private readonly Color formColor = Color.FromArgb(255, 42, 42, 44);
+
 		private readonly Color headerFontColor = Color.FromArgb(255, 169, 167, 167);
+
 		private readonly Color listBackground = Color.FromArgb(255, 22, 22, 22);
 
 		private readonly MaterialSkinManager materialSkinManager;
 
 		private readonly Color primary = Color.FromArgb(255, 55, 71, 79);
+
 		private readonly Color primaryDark = Color.FromArgb(255, 38, 50, 56);
+
 		private readonly Color primaryLight = Color.FromArgb(255, 96, 125, 139);
 
 		private readonly StringBuilder statusBuilder = new StringBuilder();
+
 		private readonly Color textColor = Color.FromArgb(255, 255, 255, 255);
+
 		private Filter advFilter = new Filter(ADVANCED_FILTER);
 
 		// For getting game banners
 		private GameBanners bannerGrabber;
 
 		private Thread bannerThread;
+
 		private Color borderColor = Color.FromArgb(255, 25, 28, 38);
 
 		// used to prevent moving the filler column in the game list
@@ -104,6 +114,7 @@ namespace Depressurizer
 		private bool doubleClick;
 
 		private int dragOldCat;
+
 		private Color headerCellColor = Color.FromArgb(255, 58, 58, 58);
 
 		private Color highlightCellColor = Color.FromArgb(255, 25, 55, 84);
@@ -112,13 +123,18 @@ namespace Depressurizer
 		private bool isDragging;
 
 		private object lastSelectedCat; // Stores last selected category to minimize game list refreshes
+
 		private Color menuColorDark = Color.FromArgb(255, 38, 50, 56);
+
 		private Color menuColorLight = Color.FromArgb(255, 55, 71, 79);
+
 		private Color menuHighlightText = Color.FromArgb(255, 255, 255, 234);
+
 		private Color menuPrimaryText = Color.FromArgb(255, 168, 173, 175);
 
 		// Used to reload resources of main form while switching language
 		private int originalWidth, originalHeight, originalSplitDistanceMain, originalSplitDistanceSecondary, originalSplitDistanceBrowser;
+
 		private Color primaryCellColor = Color.FromArgb(255, 29, 29, 29);
 
 		private TypedObjectListView<GameInfo> tlstGames;
@@ -175,6 +191,7 @@ namespace Depressurizer
 		#region Properties
 
 		private static Database Database => Database.Instance;
+
 		private static Logger Logger => Logger.Instance;
 
 		private bool AdvancedCategoryFilter => mchkAdvancedCategories.Checked;
@@ -1472,6 +1489,7 @@ namespace Depressurizer
 					Tag = GlobalStrings.MainForm_All,
 					Name = GlobalStrings.MainForm_All
 				};
+
 				lstCategories.Items.Add(i);
 			}
 
@@ -1480,6 +1498,7 @@ namespace Depressurizer
 				Tag = GlobalStrings.MainForm_Uncategorized,
 				Name = GlobalStrings.MainForm_Uncategorized
 			};
+
 			lstCategories.Items.Add(lvi);
 
 			lvi = new ListViewItem(GlobalStrings.MainForm_Hidden + " (" + hidden + ")")
@@ -1487,6 +1506,7 @@ namespace Depressurizer
 				Tag = GlobalStrings.MainForm_Hidden,
 				Name = GlobalStrings.MainForm_Hidden
 			};
+
 			lstCategories.Items.Add(lvi);
 
 			lvi = new ListViewItem(GlobalStrings.MainForm_VR + " (" + VR + ")")
@@ -1494,6 +1514,7 @@ namespace Depressurizer
 				Tag = GlobalStrings.MainForm_VR,
 				Name = GlobalStrings.MainForm_VR
 			};
+
 			lstCategories.Items.Add(lvi);
 
 			foreach (Category c in CurrentProfile.GameData.Categories)
@@ -1924,6 +1945,7 @@ namespace Depressurizer
 
 				return ((GameInfo) g).GetCatString(GlobalStrings.MainForm_Uncategorized);
 			};
+
 			colFavorite.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -1933,6 +1955,7 @@ namespace Depressurizer
 
 				return ((GameInfo) g).IsFavorite() ? "X" : string.Empty;
 			};
+
 			colHidden.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -1942,6 +1965,7 @@ namespace Depressurizer
 
 				return ((GameInfo) g).Hidden ? "X" : string.Empty;
 			};
+
 			colGenres.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -1957,6 +1981,7 @@ namespace Depressurizer
 
 				return GlobalStrings.MainForm_NoGenres;
 			};
+
 			colFlags.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -1972,6 +1997,7 @@ namespace Depressurizer
 
 				return GlobalStrings.MainForm_NoFlags;
 			};
+
 			colTags.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -1987,6 +2013,7 @@ namespace Depressurizer
 
 				return GlobalStrings.MainForm_NoTags;
 			};
+
 			colVRHeadsets.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2002,6 +2029,7 @@ namespace Depressurizer
 
 				return string.Empty;
 			};
+
 			colVRInput.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2017,6 +2045,7 @@ namespace Depressurizer
 
 				return string.Empty;
 			};
+
 			colVRPlayArea.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2032,6 +2061,7 @@ namespace Depressurizer
 
 				return string.Empty;
 			};
+
 			colLanguageInterface.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2047,6 +2077,7 @@ namespace Depressurizer
 
 				return string.Empty;
 			};
+
 			colLanguageSubtitles.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2062,6 +2093,7 @@ namespace Depressurizer
 
 				return string.Empty;
 			};
+
 			colLanguageFullAudio.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2077,6 +2109,7 @@ namespace Depressurizer
 
 				return string.Empty;
 			};
+
 			colYear.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2094,6 +2127,7 @@ namespace Depressurizer
 
 				return GlobalStrings.MainForm_Unknown;
 			};
+
 			colLastPlayed.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2108,6 +2142,7 @@ namespace Depressurizer
 
 				return Utility.GetDTFromUTime(((GameInfo) g).LastPlayed).Date;
 			};
+
 			colAchievements.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2118,6 +2153,7 @@ namespace Depressurizer
 				int id = ((GameInfo) g).Id;
 				return Program.Database.Games.ContainsKey(id) ? Program.Database.Games[id].TotalAchievements : 0;
 			};
+
 			colPlatforms.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2128,6 +2164,7 @@ namespace Depressurizer
 				AppPlatforms platforms = Program.Database.Games[((GameInfo) g).Id].Platforms;
 				return (platforms & AppPlatforms.Linux) != 0 && platforms != AppPlatforms.All ? platforms + ", SteamOS" : platforms.ToString();
 			};
+
 			colDevelopers.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2143,6 +2180,7 @@ namespace Depressurizer
 
 				return GlobalStrings.MainForm_Unknown;
 			};
+
 			colPublishers.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2158,6 +2196,7 @@ namespace Depressurizer
 
 				return GlobalStrings.MainForm_Unknown;
 			};
+
 			colNumberOfReviews.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2168,6 +2207,7 @@ namespace Depressurizer
 				int id = ((GameInfo) g).Id;
 				return Program.Database.Games.ContainsKey(id) ? Program.Database.Games[id].ReviewTotal : 0;
 			};
+
 			colReviewScore.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2178,6 +2218,7 @@ namespace Depressurizer
 				int id = ((GameInfo) g).Id;
 				return Program.Database.Games.ContainsKey(id) ? Program.Database.Games[id].ReviewPositivePercentage : 0;
 			};
+
 			colReviewLabel.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2240,6 +2281,7 @@ namespace Depressurizer
 
 				return 0;
 			};
+
 			colHltbMain.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2250,6 +2292,7 @@ namespace Depressurizer
 				int id = ((GameInfo) g).Id;
 				return Program.Database.Games.ContainsKey(id) ? Program.Database.Games[id].HltbMain : 0;
 			};
+
 			colHltbExtras.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2260,6 +2303,7 @@ namespace Depressurizer
 				int id = ((GameInfo) g).Id;
 				return Program.Database.Games.ContainsKey(id) ? Program.Database.Games[id].HltbExtras : 0;
 			};
+
 			colHltbCompletionist.AspectGetter = delegate(object g)
 			{
 				if (g == null)
@@ -2277,11 +2321,13 @@ namespace Depressurizer
 				int reviewTotal = (int) obj;
 				return reviewTotal <= 0 ? "0" : reviewTotal.ToString();
 			};
+
 			colReviewScore.AspectToStringConverter = delegate(object obj)
 			{
 				int reviewScore = (int) obj;
 				return reviewScore <= 0 ? GlobalStrings.MainForm_Unknown : reviewScore.ToString() + '%';
 			};
+
 			colReviewLabel.AspectToStringConverter = delegate(object obj)
 			{
 				int index = (int) obj;
@@ -2315,8 +2361,10 @@ namespace Depressurizer
 						1, "Overwhelmingly Negative"
 					}
 				};
+
 				return reviewLabels.ContainsKey(index) ? reviewLabels[index] : GlobalStrings.MainForm_Unknown;
 			};
+
 			AspectToStringConverterDelegate hltb = delegate(object obj)
 			{
 				int time = (int) obj;
@@ -2339,6 +2387,7 @@ namespace Depressurizer
 
 				return hours + "h " + mins + "m";
 			};
+
 			colHltbMain.AspectToStringConverter = delegate(object obj)
 			{
 				int time = (int) obj;
@@ -2361,6 +2410,7 @@ namespace Depressurizer
 
 				return hours + "h " + mins + "m";
 			};
+
 			colHltbExtras.AspectToStringConverter = hltb;
 			colHltbCompletionist.AspectToStringConverter = hltb;
 			colLastPlayed.AspectToStringConverter = delegate(object obj)
@@ -2759,6 +2809,7 @@ namespace Depressurizer
 						ReferenceCorner = ContentAlignment.TopLeft,
 						Transparency = 200
 					};
+
 					e.SubItem.Decorations.Add(earlyAccessDecoration);
 				}
 			}

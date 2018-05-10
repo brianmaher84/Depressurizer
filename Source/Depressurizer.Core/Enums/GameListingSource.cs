@@ -23,10 +23,15 @@ namespace Depressurizer.Core.Enums
 	public enum GameListingSource
 	{
 		Unknown,
+
 		SteamConfig,
+
 		WebProfile,
+
 		PackageFree,
+
 		PackageNormal,
+
 		Manual
 	}
 }

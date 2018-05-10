@@ -38,6 +38,7 @@ namespace Depressurizer.Dialogs
 		#region Fields
 
 		private readonly List<int> _jobs;
+
 		private readonly List<DatabaseEntry> _results = new List<DatabaseEntry>();
 
 		private DateTime _start;
@@ -136,6 +137,7 @@ namespace Depressurizer.Dialogs
 			{
 				Id = appId
 			};
+
 			entry.ScrapeStore();
 
 			lock (SyncRoot)

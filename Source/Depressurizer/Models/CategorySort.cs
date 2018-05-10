@@ -31,6 +31,7 @@ namespace Depressurizer.Models
 		#region Public Properties
 
 		public int Column { get; set; }
+
 		public SortOrder Order { get; set; }
 
 		#endregion

@@ -58,23 +58,26 @@ namespace Depressurizer
 		#region Static Fields
 
 		private static readonly object SyncRoot = new object();
+
 		private static volatile Database _instance;
 
 		#endregion
 
 		#region Fields
 
-		// Main Data
-		public Dictionary<int, DatabaseEntry> Games { get; }= new Dictionary<int, DatabaseEntry>();
 		public int LastHltbUpdate;
+
 		private LanguageSupport _allLanguages;
+
 		private SortedSet<string> _allStoreDevelopers;
 
 		private SortedSet<string> _allStoreFlags;
 
 		// Extra data
 		private SortedSet<string> _allStoreGenres;
+
 		private SortedSet<string> _allStorePublishers;
+
 		private VRSupport _allVrSupportFlags;
 
 		#endregion
@@ -108,7 +111,16 @@ namespace Depressurizer
 			}
 		}
 
+		// Main Data
+		public Dictionary<int, DatabaseEntry> Games { get; } = new Dictionary<int, DatabaseEntry>();
+
 		public StoreLanguage Language => Settings.Instance.StoreLanguage;
+
+		#endregion
+
+		#region Properties
+
+		private static Logger Logger => Logger.Instance;
 
 		#endregion
 
@@ -800,6 +812,32 @@ namespace Depressurizer
 			return added;
 		}
 
+		public bool Load()
+		{
+			return Load("database.json");
+		}
+
+		public bool Load(string path)
+		{
+			lock (SyncRoot)
+			{
+				Logger.Info("Loading database from \"{0}\"", path);
+
+				if (!File.Exists(path))
+				{
+					Logger.Warn("Database not found at \"{0}\"", path);
+					return false;
+				}
+
+				string database = File.ReadAllText(path);
+				_instance = JsonConvert.DeserializeObject<Database>(database);
+
+				Logger.Info("Processed database, loading completed. Language {0}", Language);
+
+				return true;
+			}
+		}
+
 		public void Save(string path)
 		{
 			Save(path, path.EndsWith(".gz"));
@@ -1199,34 +1237,6 @@ namespace Depressurizer
 				g.HltbCompletionist = XmlUtil.GetIntFromNode(gameNode[xmlNameGameHltbCompletionist], 0);
 
 				Games.Add(id, g);
-			}
-		}
-
-		public bool Load()
-		{
-			return Load("database.json");
-		}
-
-		private static Logger Logger => Logger.Instance;
-
-		public bool Load(string path)
-		{
-			lock (SyncRoot)
-			{
-				Logger.Info("Loading database from \"{0}\"", path);
-
-				if (!File.Exists(path))
-				{
-					Logger.Warn("Database not found at \"{0}\"", path);
-					return false;
-				}
-
-				string database = File.ReadAllText(path);
-				_instance = JsonConvert.DeserializeObject<Database>(database);
-
-				Logger.Info("Processed database, loading completed. Language {0}", Language);
-
-				return true;
 			}
 		}
 
