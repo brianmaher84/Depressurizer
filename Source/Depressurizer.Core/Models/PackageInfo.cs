@@ -124,7 +124,7 @@ namespace Depressurizer.Core.Models
 				"packageId"
 			}, false);
 
-			if (idNode == null || idNode.NodeType != ValueType.Int)
+			if ((idNode == null) || (idNode.NodeType != ValueType.Int))
 			{
 				return null;
 			}
@@ -137,7 +137,7 @@ namespace Depressurizer.Core.Models
 				"name"
 			}, false);
 
-			if (nameNode != null && nameNode.NodeType == ValueType.String)
+			if ((nameNode != null) && (nameNode.NodeType == ValueType.String))
 			{
 				name = nameNode.NodeString;
 			}
@@ -145,14 +145,14 @@ namespace Depressurizer.Core.Models
 			PackageInfo packageInfo = new PackageInfo(id, name);
 
 			VDFNode billingTypeNode = node["billingtype"];
-			if (billingTypeNode != null && (billingTypeNode.NodeType == ValueType.String || billingTypeNode.NodeType == ValueType.Int))
+			if ((billingTypeNode != null) && ((billingTypeNode.NodeType == ValueType.String) || (billingTypeNode.NodeType == ValueType.Int)))
 			{
 				int bType = billingTypeNode.NodeInt;
 				packageInfo.BillingType = (PackageBillingType) bType;
 			}
 
 			VDFNode appsNode = node["appids"];
-			if (appsNode == null || appsNode.NodeType != ValueType.Array)
+			if ((appsNode == null) || (appsNode.NodeType != ValueType.Array))
 			{
 				return packageInfo;
 			}

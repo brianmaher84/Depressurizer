@@ -154,15 +154,15 @@ namespace Depressurizer.Core.Models
 
 		public void MergeIn(DatabaseEntry other)
 		{
-			bool useAppInfoFields = other.LastAppInfoUpdate > LastAppInfoUpdate || LastAppInfoUpdate == 0 && other.LastStoreScrape >= LastStoreScrape;
+			bool useAppInfoFields = (other.LastAppInfoUpdate > LastAppInfoUpdate) || ((LastAppInfoUpdate == 0) && (other.LastStoreScrape >= LastStoreScrape));
 			bool useScrapeOnlyFields = other.LastStoreScrape >= LastStoreScrape;
 
-			if (other.AppType != AppType.Unknown && (AppType == AppType.Unknown || useAppInfoFields))
+			if ((other.AppType != AppType.Unknown) && ((AppType == AppType.Unknown) || useAppInfoFields))
 			{
 				AppType = other.AppType;
 			}
 
-			if (other.LastStoreScrape >= LastStoreScrape || LastStoreScrape == 0 && other.LastAppInfoUpdate > LastAppInfoUpdate || Platforms == AppPlatforms.None)
+			if ((other.LastStoreScrape >= LastStoreScrape) || ((LastStoreScrape == 0) && (other.LastAppInfoUpdate > LastAppInfoUpdate)) || (Platforms == AppPlatforms.None))
 			{
 				Platforms = other.Platforms;
 			}
@@ -182,31 +182,31 @@ namespace Depressurizer.Core.Models
 
 			if (useScrapeOnlyFields)
 			{
-				if (other.Genres != null && other.Genres.Count > 0)
+				if ((other.Genres != null) && (other.Genres.Count > 0))
 				{
 					Genres.Clear();
 					Genres.AddRange(other.Genres);
 				}
 
-				if (other.Flags != null && other.Flags.Count > 0)
+				if ((other.Flags != null) && (other.Flags.Count > 0))
 				{
 					Flags.Clear();
 					Flags.AddRange(other.Flags);
 				}
 
-				if (other.Tags != null && other.Tags.Count > 0)
+				if ((other.Tags != null) && (other.Tags.Count > 0))
 				{
 					Tags.Clear();
 					Tags.AddRange(other.Tags);
 				}
 
-				if (other.Developers != null && other.Developers.Count > 0)
+				if ((other.Developers != null) && (other.Developers.Count > 0))
 				{
 					Developers.Clear();
 					Developers.AddRange(other.Developers);
 				}
 
-				if (other.Publishers != null && other.Publishers.Count > 0)
+				if ((other.Publishers != null) && (other.Publishers.Count > 0))
 				{
 					Publishers.Clear();
 					Publishers.AddRange(other.Publishers);
@@ -301,7 +301,7 @@ namespace Depressurizer.Core.Models
 				resp = (HttpWebResponse) req.GetResponse();
 
 				int count = 0;
-				while (resp.StatusCode == HttpStatusCode.Found && count < 5)
+				while ((resp.StatusCode == HttpStatusCode.Found) && (count < 5))
 				{
 					resp.Close();
 
@@ -325,7 +325,7 @@ namespace Depressurizer.Core.Models
 				}
 
 				// Check if we were redirected too many times
-				if (count == 5 && resp.StatusCode == HttpStatusCode.Found)
+				if ((count == 5) && (resp.StatusCode == HttpStatusCode.Found))
 				{
 					Logger.Instance.Warn("Scraping {0}: Too many redirects, aborting scraping", Id);
 					return;
@@ -356,7 +356,7 @@ namespace Depressurizer.Core.Models
 				if (resp.ResponseUri.Segments[1] == "agecheck/")
 				{
 					// Encountered an age check with no redirect
-					if (resp.ResponseUri.Segments.Length < 4 || resp.ResponseUri.Segments[3].TrimEnd('/') == Id.ToString(CultureInfo.InvariantCulture))
+					if ((resp.ResponseUri.Segments.Length < 4) || (resp.ResponseUri.Segments[3].TrimEnd('/') == Id.ToString(CultureInfo.InvariantCulture)))
 					{
 						Logger.Instance.Warn("Scraping {0}: Encounterd an age check without redirect, aborting scraping", Id);
 						return;

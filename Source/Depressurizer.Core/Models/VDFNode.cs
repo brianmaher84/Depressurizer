@@ -89,7 +89,7 @@ namespace Depressurizer.Core.Models
 		{
 			get
 			{
-				if (NodeType != ValueType.Array || !(NodeData is Dictionary<string, VDFNode> arrayData))
+				if ((NodeType != ValueType.Array) || !(NodeData is Dictionary<string, VDFNode> arrayData))
 				{
 					return null;
 				}
@@ -134,7 +134,7 @@ namespace Depressurizer.Core.Models
 		{
 			get
 			{
-				if (NodeType != ValueType.String || !(NodeData is string stringData))
+				if ((NodeType != ValueType.String) || !(NodeData is string stringData))
 				{
 					return null;
 				}
@@ -161,7 +161,7 @@ namespace Depressurizer.Core.Models
 		{
 			get
 			{
-				if (NodeType != ValueType.Array || !(NodeData is Dictionary<string, VDFNode> arrayData))
+				if ((NodeType != ValueType.Array) || !(NodeData is Dictionary<string, VDFNode> arrayData))
 				{
 					return null;
 				}
@@ -175,7 +175,7 @@ namespace Depressurizer.Core.Models
 			}
 			set
 			{
-				if (NodeType != ValueType.Array || !(NodeData is Dictionary<string, VDFNode> arrayData))
+				if ((NodeType != ValueType.Array) || !(NodeData is Dictionary<string, VDFNode> arrayData))
 				{
 					return;
 				}
@@ -235,7 +235,7 @@ namespace Depressurizer.Core.Models
 					nextByte = 8;
 				}
 
-				if (endOfStream || nextByte == 8 || stream.BaseStream.Position == streamLength)
+				if (endOfStream || (nextByte == 8) || (stream.BaseStream.Position == streamLength))
 				{
 					break;
 				}
@@ -306,7 +306,7 @@ namespace Depressurizer.Core.Models
 
 				// Get key
 				char nextChar = (char) stream.Read();
-				if (stream.EndOfStream || nextChar == '}')
+				if (stream.EndOfStream || (nextChar == '}'))
 				{
 					break;
 				}
@@ -351,7 +351,7 @@ namespace Depressurizer.Core.Models
 		{
 			int indexAt = 0;
 
-			while (indexAt < bytes.Length && binaryReader.BaseStream.Position < streamLength)
+			while ((indexAt < bytes.Length) && (binaryReader.BaseStream.Position < streamLength))
 			{
 				if (binaryReader.ReadByte() == bytes[indexAt])
 				{
@@ -391,7 +391,7 @@ namespace Depressurizer.Core.Models
 		/// <exception cref="InvalidDataException"></exception>
 		public bool ContainsKey(string index)
 		{
-			if (NodeType != ValueType.Array || !(NodeData is Dictionary<string, VDFNode> arrayData))
+			if ((NodeType != ValueType.Array) || !(NodeData is Dictionary<string, VDFNode> arrayData))
 			{
 				throw new InvalidCastException("NodeData is not a Dictionary<string, VDFNode>");
 			}
@@ -455,7 +455,7 @@ namespace Depressurizer.Core.Models
 
 		public bool RemoveSubNode(string key)
 		{
-			return NodeType == ValueType.Array && NodeArray.Remove(key);
+			return (NodeType == ValueType.Array) && NodeArray.Remove(key);
 		}
 
 		public void SaveAsBinary(BinaryWriter binaryWriter)
@@ -582,7 +582,7 @@ namespace Depressurizer.Core.Models
 				{
 					endOfStream = true;
 				}
-			} while (!stringDone && !endOfStream && reader.BaseStream.Position < streamLength);
+			} while (!stringDone && !endOfStream && (reader.BaseStream.Position < streamLength));
 
 			if (!stringDone)
 			{
@@ -654,7 +654,7 @@ namespace Depressurizer.Core.Models
 		private static void ReadText_SkipWhitespace(StreamReader stream)
 		{
 			char nextChar = (char) stream.Peek();
-			while (nextChar == ' ' || nextChar == '\r' || nextChar == '\n' || nextChar == '\t')
+			while ((nextChar == ' ') || (nextChar == '\r') || (nextChar == '\n') || (nextChar == '\t'))
 			{
 				stream.Read();
 				nextChar = (char) stream.Peek();

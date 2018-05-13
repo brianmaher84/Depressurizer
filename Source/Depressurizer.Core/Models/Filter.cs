@@ -93,6 +93,8 @@ namespace Depressurizer.Core.Models
 			set => _exclude = new SortedSet<Category>(value);
 		}
 
+		public int Game { get; set; } = -1;
+
 		public int Hidden { get; set; } = -1;
 
 		/// <summary>
@@ -105,6 +107,8 @@ namespace Depressurizer.Core.Models
 			get => _require;
 			set => _require = new SortedSet<Category>(value);
 		}
+
+		public int Software { get; set; } = -1;
 
 		public int Uncategorized { get; set; } = -1;
 

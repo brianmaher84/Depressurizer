@@ -476,15 +476,15 @@ namespace Depressurizer
 				}
 				else
 				{
-					if (currentCulture.Name == "zh-Hans" || currentCulture.Parent.Name == "zh-Hans")
+					if ((currentCulture.Name == "zh-Hans") || (currentCulture.Parent.Name == "zh-Hans"))
 					{
 						dbLang = StoreLanguage.zh_Hans;
 					}
-					else if (currentCulture.Name == "zh-Hant" || currentCulture.Parent.Name == "zh-Hant")
+					else if ((currentCulture.Name == "zh-Hant") || (currentCulture.Parent.Name == "zh-Hant"))
 					{
 						dbLang = StoreLanguage.zh_Hant;
 					}
-					else if (currentCulture.Name == "pt-BR" || currentCulture.Parent.Name == "pt-BR")
+					else if ((currentCulture.Name == "pt-BR") || (currentCulture.Parent.Name == "pt-BR"))
 					{
 						dbLang = StoreLanguage.pt_BR;
 					}
@@ -585,7 +585,7 @@ namespace Depressurizer
 		/// <returns>A LanguageSupport struct containing the languages</returns>
 		public LanguageSupport GetAllLanguages()
 		{
-			if (_allLanguages.FullAudio == null || _allLanguages.Interface == null || _allLanguages.Subtitles == null)
+			if ((_allLanguages.FullAudio == null) || (_allLanguages.Interface == null) || (_allLanguages.Subtitles == null))
 			{
 				return CalculateAllLanguages();
 			}
@@ -630,7 +630,7 @@ namespace Depressurizer
 		/// <returns>A VRSupport struct containing the flags</returns>
 		public VRSupport GetAllVrSupportFlags()
 		{
-			if (_allVrSupportFlags.Headsets == null || _allVrSupportFlags.Input == null || _allVrSupportFlags.PlayArea == null)
+			if ((_allVrSupportFlags.Headsets == null) || (_allVrSupportFlags.Input == null) || (_allVrSupportFlags.PlayArea == null))
 			{
 				return CalculateAllVrSupportFlags();
 			}
@@ -643,7 +643,7 @@ namespace Depressurizer
 			if (Games.ContainsKey(gameId))
 			{
 				List<string> res = Games[gameId].Developers;
-				if ((res == null || res.Count == 0) && depth > 0 && Games[gameId].ParentId > 0)
+				if (((res == null) || (res.Count == 0)) && (depth > 0) && (Games[gameId].ParentId > 0))
 				{
 					res = GetDevelopers(Games[gameId].ParentId, depth - 1);
 				}
@@ -659,7 +659,7 @@ namespace Depressurizer
 			if (Games.ContainsKey(gameId))
 			{
 				List<string> res = Games[gameId].Flags;
-				if ((res == null || res.Count == 0) && depth > 0 && Games[gameId].ParentId > 0)
+				if (((res == null) || (res.Count == 0)) && (depth > 0) && (Games[gameId].ParentId > 0))
 				{
 					res = GetFlagList(Games[gameId].ParentId, depth - 1);
 				}
@@ -675,16 +675,16 @@ namespace Depressurizer
 			if (Games.ContainsKey(gameId))
 			{
 				List<string> res = Games[gameId].Genres;
-				if (tagFallback && (res == null || res.Count == 0))
+				if (tagFallback && ((res == null) || (res.Count == 0)))
 				{
 					List<string> tags = GetTagList(gameId, 0);
-					if (tags != null && tags.Count > 0)
+					if ((tags != null) && (tags.Count > 0))
 					{
 						res = new List<string>(tags.Intersect(GetAllGenres()));
 					}
 				}
 
-				if ((res == null || res.Count == 0) && depth > 0 && Games[gameId].ParentId > 0)
+				if (((res == null) || (res.Count == 0)) && (depth > 0) && (Games[gameId].ParentId > 0))
 				{
 					res = GetGenreList(Games[gameId].ParentId, depth - 1, tagFallback);
 				}
@@ -710,7 +710,7 @@ namespace Depressurizer
 			if (Games.ContainsKey(gameId))
 			{
 				List<string> res = Games[gameId].Publishers;
-				if ((res == null || res.Count == 0) && depth > 0 && Games[gameId].ParentId > 0)
+				if (((res == null) || (res.Count == 0)) && (depth > 0) && (Games[gameId].ParentId > 0))
 				{
 					res = GetPublishers(Games[gameId].ParentId, depth - 1);
 				}
@@ -741,7 +741,7 @@ namespace Depressurizer
 			if (Games.ContainsKey(gameId))
 			{
 				List<string> res = Games[gameId].Tags;
-				if ((res == null || res.Count == 0) && depth > 0 && Games[gameId].ParentId > 0)
+				if (((res == null) || (res.Count == 0)) && (depth > 0) && (Games[gameId].ParentId > 0))
 				{
 					res = GetTagList(Games[gameId].ParentId, depth - 1);
 				}
@@ -760,7 +760,7 @@ namespace Depressurizer
 			}
 
 			VRSupport vrSupport = Games[gameId].VRSupport;
-			if (vrSupport.Headsets.Count == 0 && vrSupport.Input.Count == 0 && vrSupport.PlayArea.Count == 0 && depth > 0 && Games[gameId].ParentId > 0)
+			if ((vrSupport.Headsets.Count == 0) && (vrSupport.Input.Count == 0) && (vrSupport.PlayArea.Count == 0) && (depth > 0) && (Games[gameId].ParentId > 0))
 			{
 				vrSupport = GetVRSupport(Games[gameId].ParentId, depth - 1);
 			}
@@ -776,7 +776,7 @@ namespace Depressurizer
 			}
 
 			DatabaseEntry entry = Games[appId];
-			return entry.AppType == AppType.Application || entry.AppType == AppType.Game;
+			return (entry.AppType == AppType.Application) || (entry.AppType == AppType.Game);
 		}
 
 		public int IntegrateAppList(XmlDocument doc)
@@ -791,7 +791,7 @@ namespace Depressurizer
 					if (Games.ContainsKey(appId))
 					{
 						DatabaseEntry g = Games[appId];
-						if (string.IsNullOrEmpty(g.Name) || g.Name != gameName)
+						if (string.IsNullOrEmpty(g.Name) || (g.Name != gameName))
 						{
 							g.Name = gameName;
 							g.AppType = AppType.Unknown;
@@ -900,23 +900,22 @@ namespace Depressurizer
 			Program.Logger.Info(GlobalStrings.GameDB_GameDBSaved);
 		}
 
-		/// <summary>
-		///     Returns whether the game supports VR
-		/// </summary>
-		public bool SupportsVr(int gameId, int depth = 3)
+		public bool SupportsVR(int appId, int depth = 3)
 		{
-			if (Games.ContainsKey(gameId))
+			if (!Contains(appId) || (depth == 0))
 			{
-				VRSupport res = Games[gameId].VRSupport;
-				if (res.Headsets != null && res.Headsets.Count > 0 || res.Input != null && res.Input.Count > 0 || res.PlayArea != null && res.PlayArea.Count > 0 && depth > 0 && Games[gameId].ParentId > 0)
-				{
-					return true;
-				}
+				return false;
+			}
 
-				if (depth > 0 && Games[gameId].ParentId > 0)
-				{
-					return SupportsVr(Games[gameId].ParentId, depth - 1);
-				}
+			VRSupport vrSupport = Games[appId].VRSupport;
+			if ((vrSupport.Headsets.Count > 0) || (vrSupport.Input.Count > 0) || (vrSupport.PlayArea.Count > 0))
+			{
+				return true;
+			}
+
+			if ((depth > 0) && (Games[appId].ParentId > 0))
+			{
+				return SupportsVR(Games[appId].ParentId, depth - 1);
 			}
 
 			return false;
@@ -965,7 +964,7 @@ namespace Depressurizer
 					entry.Name = aInf.Name;
 				}
 
-				if (entry.Platforms == AppPlatforms.None || entry.LastStoreScrape == 0 && aInf.Platforms > AppPlatforms.None)
+				if ((entry.Platforms == AppPlatforms.None) || ((entry.LastStoreScrape == 0) && (aInf.Platforms > AppPlatforms.None)))
 				{
 					entry.Platforms = aInf.Platforms;
 				}
@@ -1004,7 +1003,7 @@ namespace Depressurizer
 					{
 						dynamic htlbInfo = steamAppData.HltbInfo;
 
-						if (!includeImputedTimes && htlbInfo.MainTtbImputed == "True")
+						if (!includeImputedTimes && (htlbInfo.MainTtbImputed == "True"))
 						{
 							Games[id].HltbMain = 0;
 						}
@@ -1013,7 +1012,7 @@ namespace Depressurizer
 							Games[id].HltbMain = htlbInfo.MainTtb;
 						}
 
-						if (!includeImputedTimes && htlbInfo.ExtrasTtbImputed == "True")
+						if (!includeImputedTimes && (htlbInfo.ExtrasTtbImputed == "True"))
 						{
 							Games[id].HltbExtras = 0;
 						}
@@ -1022,7 +1021,7 @@ namespace Depressurizer
 							Games[id].HltbExtras = htlbInfo.ExtrasTtb;
 						}
 
-						if (!includeImputedTimes && htlbInfo.CompletionistTtbImputed == "True")
+						if (!includeImputedTimes && (htlbInfo.CompletionistTtbImputed == "True"))
 						{
 							Games[id].HltbCompletionist = 0;
 						}
@@ -1128,7 +1127,7 @@ namespace Depressurizer
 						else
 						{
 							float interp = i / (float) (tagsToLoad - 1);
-							score = (1 - interp) * weightFactor + interp;
+							score = ((1 - interp) * weightFactor) + interp;
 						}
 					}
 

@@ -59,7 +59,7 @@ namespace Depressurizer.Core.Helpers
 
 				// Read some header fields
 				_binaryReader.ReadByte();
-				if (_binaryReader.ReadByte() != 0x44 || _binaryReader.ReadByte() != 0x56)
+				if ((_binaryReader.ReadByte() != 0x44) || (_binaryReader.ReadByte() != 0x56))
 				{
 					throw new InvalidDataException("Invalid VDF format");
 				}
