@@ -54,7 +54,7 @@ using Rallion;
 
 namespace Depressurizer
 {
-	public partial class FormMain : MaterialForm
+	public partial class MainForm : MaterialForm
 	{
 		#region Constants
 
@@ -145,7 +145,7 @@ namespace Depressurizer
 
 		#region Constructors and Destructors
 
-		public FormMain()
+		public MainForm()
 		{
 			InitializeComponent();
 
@@ -3417,7 +3417,7 @@ namespace Depressurizer
 			// jpodadera. If language has been changed, reload resources of main window
 			if (actualCulture.Name != Thread.CurrentThread.CurrentUICulture.Name)
 			{
-				ComponentResourceManager resources = new ComponentResourceManager(typeof(FormMain));
+				ComponentResourceManager resources = new ComponentResourceManager(typeof(MainForm));
 				resources.ApplyResources(this, Name, Thread.CurrentThread.CurrentUICulture);
 
 				// jpodadera. Save actual size and recover original size before reload resources of controls

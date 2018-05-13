@@ -518,14 +518,14 @@ namespace Depressurizer
 
 			//Update DB with data in correct language
 
-			if (FormMain.CurrentProfile == null)
+			if (MainForm.CurrentProfile == null)
 			{
 				Save("GameDB.xml.gz");
 				return;
 			}
 
 			SortedSet<int> appIds = new SortedSet<int>();
-			foreach (GameInfo game in FormMain.CurrentProfile.GameData.Games.Values)
+			foreach (GameInfo game in MainForm.CurrentProfile.GameData.Games.Values)
 			{
 				if (game.Id <= 0)
 				{

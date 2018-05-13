@@ -63,7 +63,7 @@ namespace Depressurizer
 
 			Logger.Info("Program initialized.");
 
-			Application.Run(new FormMain());
+			Application.Run(new MainForm());
 		}
 
 		private static void OnApplicationExit(object sender, EventArgs e)

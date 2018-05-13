@@ -20,7 +20,7 @@ along with Depressurizer.  If not, see <http://www.gnu.org/licenses/>.
 using System.Windows.Forms;
 
 namespace Depressurizer {
-    partial class FormMain {
+    partial class MainForm {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -45,7 +45,7 @@ namespace Depressurizer {
         /// </summary>
         private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.splitContainer = new System.Windows.Forms.SplitContainer();
 			this.splitCategories = new System.Windows.Forms.SplitContainer();
 			this.tblLayoutPanelFilterToolbar = new System.Windows.Forms.TableLayoutPanel();
