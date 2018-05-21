@@ -104,9 +104,9 @@ namespace Depressurizer.Dialogs
 			string timeLeft = string.Format(CultureInfo.CurrentUICulture, "{0}: ", Resources.ScrapeDialog_TimeLeft) + "{0}";
 			if (CompletedJobs > 0)
 			{
-				if (CompletedJobs > TotalJobs / 4 || CompletedJobs % 5 == 0)
+				if ((CompletedJobs > (TotalJobs / 4)) || ((CompletedJobs % 5) == 0))
 				{
-					TimeSpan timeRemaining = TimeSpan.FromTicks(DateTime.UtcNow.Subtract(_start).Ticks * (TotalJobs - (CompletedJobs + 1)) / (CompletedJobs + 1));
+					TimeSpan timeRemaining = TimeSpan.FromTicks((DateTime.UtcNow.Subtract(_start).Ticks * (TotalJobs - (CompletedJobs + 1))) / (CompletedJobs + 1));
 					if (timeRemaining.TotalSeconds >= 60)
 					{
 						_timeLeft = string.Format(CultureInfo.InvariantCulture, timeLeft, timeRemaining.Minutes + ":" + (timeRemaining.Seconds < 10 ? "0" + timeRemaining.Seconds : timeRemaining.Seconds.ToString()));

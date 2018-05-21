@@ -122,8 +122,6 @@ namespace Depressurizer.Dialogs
 
 		protected void FetchXmlPref()
 		{
-
-
 			try
 			{
 				FetchXml();
