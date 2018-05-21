@@ -239,6 +239,37 @@ namespace Depressurizer
 			return string.Format(CultureInfo.InvariantCulture, "{0} ({1})", categoryName, categoryCount);
 		}
 
+		private static void CheckForDepressurizerUpdates()
+		{
+			Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+			try
+			{
+				Version githubVersion;
+				string url;
+				using (WebClient wc = new WebClient())
+				{
+					wc.Headers.Set("User-Agent", "Depressurizer");
+					string json = wc.DownloadString(Constants.UrlLatestRelease);
+					JObject parsedJson = JObject.Parse(json);
+					githubVersion = new Version(((string) parsedJson.SelectToken("tag_name")).Replace("v", ""));
+					url = (string) parsedJson.SelectToken("html_url");
+				}
+
+				if (githubVersion > currentVersion)
+				{
+					if (MessageBox.Show(GlobalStrings.MainForm_Msg_UpdateFound, GlobalStrings.MainForm_Msg_UpdateFoundTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
+					{
+						Process.Start(url);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Program.Logger.Exception(GlobalStrings.MainForm_Log_ExceptionDepressurizerUpdate, e);
+				MessageBox.Show(string.Format(GlobalStrings.MainForm_Msg_ErrorDepressurizerUpdate, e.Message), GlobalStrings.Gen_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+		}
+
 		private static ListViewItem CreateListViewItem(Category category)
 		{
 			return new ListViewItem(CategoryListViewItemText(category))
@@ -490,54 +521,49 @@ namespace Depressurizer
 			UseWaitCursor = false;
 		}
 
-		/// <summary>
-		///     Assigns the given favorite state to all selected items in the game list.
-		/// </summary>
-		/// <param name="fav">True to turn fav on, false to turn it off.</param>
-		private void AssignFavoriteToSelectedGames(bool fav)
+		private void AssignFavoriteToSelectedGames(bool isFavorite)
 		{
-			if (lstGames.SelectedObjects.Count > 0)
+			if (lstGames.SelectedObjects.Count <= 0)
 			{
-				Cursor.Current = Cursors.WaitCursor;
-				foreach (GameInfo g in tlstGames.SelectedObjects)
-				{
-					g.SetFavorite(fav);
-				}
-
-				FillCategoryList();
-				RebuildGamelist();
-				MakeChange(true);
-				Cursor.Current = Cursors.Default;
+				return;
 			}
+
+			UseWaitCursor = true;
+
+			foreach (GameInfo gameInfo in tlstGames.SelectedObjects)
+			{
+				gameInfo.SetFavorite(isFavorite);
+			}
+
+			FillCategoryList();
+			RebuildGamelist();
+			MakeChange(true);
+
+			UseWaitCursor = false;
 		}
 
-		/// <summary>
-		///     Add or remove the hidden attribute to the selected games
-		/// </summary>
-		/// <param name="hidden">Whether the games should be hidden</param>
-		private void AssignHiddenToSelectedGames(bool hidden)
+		private void AssignHiddenToSelectedGames(bool isHidden)
 		{
-			if (lstGames.SelectedObjects.Count > 0)
+			if (lstGames.SelectedObjects.Count <= 0)
 			{
-				Cursor.Current = Cursors.WaitCursor;
-				foreach (GameInfo g in tlstGames.SelectedObjects)
-				{
-					g.SetHidden(hidden);
-				}
-
-				FillCategoryList();
-				FilterGamelist(false);
-				MakeChange(true);
-				Cursor.Current = Cursors.Default;
+				return;
 			}
+
+			UseWaitCursor = true;
+
+			foreach (GameInfo gameInfo in tlstGames.SelectedObjects)
+			{
+				gameInfo.SetHidden(isHidden);
+			}
+
+			FillCategoryList();
+			FilterGamelist(false);
+			MakeChange(true);
+
+			UseWaitCursor = false;
 		}
 
-		/// <summary>
-		///     Autocategorizes a set of games.
-		/// </summary>
-		/// <param name="selectedOnly">If true, runs on the selected games, otherwise, runs on all games.</param>
-		/// <param name="autoCat">The autocat object to use.</param>
-		private void Autocategorize(bool selectedOnly, AutoCat autoCat, bool scrape = true, bool refresh = true)
+		private void AutoCategorize(bool selectedOnly, AutoCat autoCat, bool scrape = true, bool refresh = true)
 		{
 			if (autoCat == null)
 			{
@@ -754,116 +780,83 @@ namespace Depressurizer
 
 		private void cboFilter_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if ((cboFilter.SelectedItem != null) && AdvancedCategoryFilter)
+			if (cboFilter.SelectedItem == null)
 			{
-				ApplyFilter((Filter) cboFilter.SelectedItem);
+				return;
 			}
+
+			if (!AdvancedCategoryFilter)
+			{
+				return;
+			}
+
+			if (!(cboFilter.SelectedItem is Filter filter))
+			{
+				return;
+			}
+
+			ApplyFilter(filter);
 		}
 
-		/// <summary>
-		///     jpodadera. Recursive function to reload resources of new language for a control and its childs
-		/// </summary>
-		/// <param name="c"></param>
-		/// Control to reload resources
-		/// <param name="resources"></param>
-		/// Resource manager
-		/// <param name="newCulture"></param>
-		/// Culture of language to load
-		private void changeLanguageControls(Control c, ComponentResourceManager resources, CultureInfo newCulture)
+		private void ChangeLanguageControls(Control control, ComponentResourceManager resourceManager, CultureInfo newCulture)
 		{
-			if (c != null)
+			if (control == null)
 			{
-				Rectangle currentBounds = c.Bounds;
-				if (c.GetType() == typeof(MenuStrip))
-				{
-					foreach (ToolStripDropDownItem mItem in (c as MenuStrip).Items)
-					{
-						changeLanguageToolStripItems(mItem, resources, newCulture);
-					}
-				}
-				else if (c is ListView)
-				{
-					// jpodadera. Because a framework bug, names of ColumnHeader objects are empty. 
-					// Resolved by saving names to Tag property.
-					foreach (ColumnHeader cHeader in (c as ListView).Columns)
-					{
-						if (cHeader.Tag != null)
-						{
-							resources.ApplyResources(cHeader, cHeader.Tag.ToString(), newCulture);
-						}
-					}
-				}
-				else
-				{
-					foreach (Control childControl in c.Controls)
-					{
-						changeLanguageControls(childControl, resources, newCulture);
-					}
-				}
-
-				resources.ApplyResources(c, c.Name, newCulture);
-				c.Bounds = currentBounds;
+				return;
 			}
+
+			Rectangle currentBounds = control.Bounds;
+			if (control.GetType() == typeof(MenuStrip))
+			{
+				ToolStripItemCollection toolStripItemCollection = (control as MenuStrip)?.Items;
+				if (toolStripItemCollection != null)
+				{
+					foreach (ToolStripDropDownItem mItem in toolStripItemCollection)
+					{
+						ChangeLanguageToolStripItems(mItem, resourceManager, newCulture);
+					}
+				}
+			}
+			else if (control is ListView view)
+			{
+				// jpodadera. Because a framework bug, names of ColumnHeader objects are empty. 
+				// Resolved by saving names to Tag property.
+				foreach (ColumnHeader cHeader in view.Columns)
+				{
+					if (cHeader.Tag != null)
+					{
+						resourceManager.ApplyResources(cHeader, cHeader.Tag.ToString(), newCulture);
+					}
+				}
+			}
+			else
+			{
+				foreach (Control childControl in control.Controls)
+				{
+					ChangeLanguageControls(childControl, resourceManager, newCulture);
+				}
+			}
+
+			resourceManager.ApplyResources(control, control.Name, newCulture);
+			control.Bounds = currentBounds;
 		}
 
-		/// <summary>
-		///     jpodadera. Recursive function to reload resources of new language for a menu item and its childs
-		/// </summary>
-		/// <param name="item"></param>
-		/// Item menu to reload resources
-		/// <param name="resources"></param>
-		/// Resource manager
-		/// <param name="newCulture"></param>
-		/// Culture of language to load
-		private void changeLanguageToolStripItems(ToolStripItem item, ComponentResourceManager resources, CultureInfo newCulture)
+		private void ChangeLanguageToolStripItems(ToolStripItem toolStripItem, ComponentResourceManager resourceManager, CultureInfo newCulture)
 		{
-			if (item != null)
+			if (toolStripItem == null)
 			{
-				if (item is ToolStripDropDownItem)
-				{
-					foreach (ToolStripItem childItem in (item as ToolStripDropDownItem).DropDownItems)
-					{
-						changeLanguageToolStripItems(childItem, resources, newCulture);
-					}
-				}
-
-				resources.ApplyResources(item, item.Name, newCulture);
+				return;
 			}
-		}
 
-		/// <summary>
-		///     Checks github for newer versions of depressurizer.
-		/// </summary>
-		/// <returns>True if there is a newer release, false otherwise</returns>
-		private void CheckForDepressurizerUpdates()
-		{
-			Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
-			try
+			if (toolStripItem is ToolStripDropDownItem item)
 			{
-				Version githubVersion;
-				string url;
-				using (WebClient wc = new WebClient())
+				foreach (ToolStripItem childItem in item.DropDownItems)
 				{
-					wc.Headers.Set("User-Agent", "Depressurizer");
-					string json = wc.DownloadString(Constants.UrlLatestRelease);
-					JObject parsedJson = JObject.Parse(json);
-					githubVersion = new Version(((string) parsedJson.SelectToken("tag_name")).Replace("v", ""));
-					url = (string) parsedJson.SelectToken("html_url");
-				}
-
-				if (githubVersion > currentVersion)
-				{
-					if (MessageBox.Show(GlobalStrings.MainForm_Msg_UpdateFound, GlobalStrings.MainForm_Msg_UpdateFoundTitle, MessageBoxButtons.YesNo) == DialogResult.Yes)
-					{
-						Process.Start(url);
-					}
+					ChangeLanguageToolStripItems(childItem, resourceManager, newCulture);
 				}
 			}
-			catch (Exception e)
-			{
-				Program.Logger.Exception(GlobalStrings.MainForm_Log_ExceptionDepressurizerUpdate, e);
-				MessageBox.Show(string.Format(GlobalStrings.MainForm_Msg_ErrorDepressurizerUpdate, e.Message), GlobalStrings.Gen_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
+
+			resourceManager.ApplyResources(toolStripItem, toolStripItem.Name, newCulture);
 		}
 
 		/// <summary>
@@ -3276,18 +3269,42 @@ namespace Depressurizer
 
 		private void mbtnFilterDelete_Click(object sender, EventArgs e)
 		{
-			if (AdvancedCategoryFilter)
+			if (cboFilter.SelectedItem == null)
 			{
-				DeleteFilter((Filter) cboFilter.SelectedItem);
+				return;
 			}
+
+			if (!AdvancedCategoryFilter)
+			{
+				return;
+			}
+
+			if (!(cboFilter.SelectedItem is Filter filter))
+			{
+				return;
+			}
+
+			DeleteFilter(filter);
 		}
 
 		private void mbtnFilterRename_Click(object sender, EventArgs e)
 		{
-			if ((cboFilter.SelectedItem != null) && AdvancedCategoryFilter)
+			if (cboFilter.SelectedItem == null)
 			{
-				RenameFilter((Filter) cboFilter.SelectedItem);
+				return;
 			}
+
+			if (!AdvancedCategoryFilter)
+			{
+				return;
+			}
+
+			if (!(cboFilter.SelectedItem is Filter filter))
+			{
+				return;
+			}
+
+			RenameFilter(filter);
 		}
 
 		private void mbtnSaveFilter_Click(object sender, EventArgs e)
@@ -3503,7 +3520,7 @@ namespace Depressurizer
 				int actualSplitDistanceCategories = splitCategories.SplitterDistance;
 				int actualSplitDistanceBrowser = splitBrowser.SplitterDistance;
 
-				changeLanguageControls(this, resources, Thread.CurrentThread.CurrentUICulture);
+				ChangeLanguageControls(this, resources, Thread.CurrentThread.CurrentUICulture);
 
 				// jpodadera. Recover previous size
 				splitContainer.SplitterDistance = actualSplitDistanceMain;
@@ -3532,7 +3549,7 @@ namespace Depressurizer
 				if (autoCat != null)
 				{
 					ClearStatus();
-					Autocategorize(false, autoCat);
+					AutoCategorize(false, autoCat);
 					FlushStatus();
 				}
 			}
@@ -3812,12 +3829,26 @@ namespace Depressurizer
 						if (ac.Selected || group)
 						{
 							ClearStatus();
-							Autocategorize(mchkAutoCatSelected.Checked, ac, first, false);
+							AutoCategorize(mchkAutoCatSelected.Checked, ac, first, false);
 							first = false;
 							FlushStatus();
 						}
 					}
 				}
+			}
+		}
+
+		private void SaveDatabase()
+		{
+			try
+			{
+				Program.Database.Save("GameDB.xml.gz");
+				AddStatus(GlobalStrings.MainForm_Status_SavedDB);
+			}
+			catch (Exception e)
+			{
+				Program.Logger.Exception(GlobalStrings.MainForm_Log_ExceptionAutosavingDB, e);
+				MessageBox.Show(string.Format(GlobalStrings.MainForm_Msg_ErrorAutosavingDB, e.Message), GlobalStrings.Gen_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
@@ -3871,20 +3902,6 @@ namespace Depressurizer
 				{
 					MessageBox.Show(string.Format(GlobalStrings.MainForm_CouldNotAddFilter, dlg.Value), GlobalStrings.Gen_Error, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
-			}
-		}
-
-		private void SaveDatabase()
-		{
-			try
-			{
-				Program.Database.Save("GameDB.xml.gz");
-				AddStatus(GlobalStrings.MainForm_Status_SavedDB);
-			}
-			catch (Exception e)
-			{
-				Program.Logger.Exception(GlobalStrings.MainForm_Log_ExceptionAutosavingDB, e);
-				MessageBox.Show(string.Format(GlobalStrings.MainForm_Msg_ErrorAutosavingDB, e.Message), GlobalStrings.Gen_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
@@ -3994,35 +4011,49 @@ namespace Depressurizer
 
 		private void SelectCategory(Settings settings)
 		{
-			if (settings.SelectedCategory != string.Empty)
+			if (string.IsNullOrWhiteSpace(settings.SelectedCategory))
 			{
-				lstCategories.SelectedIndices.Clear();
-				for (int i = 0; i < lstCategories.Items.Count; i++)
+				return;
+			}
+
+			lstCategories.SelectedIndices.Clear();
+			for (int i = 0; i < lstCategories.Items.Count; i++)
+			{
+				if (lstCategories.Items[i].Name != settings.SelectedCategory)
 				{
-					if (lstCategories.Items[i].Name == settings.SelectedCategory)
-					{
-						lstCategories.SelectedIndices.Add(i);
-						break;
-					}
+					continue;
 				}
+
+				lstCategories.SelectedIndices.Add(i);
+				break;
 			}
 		}
 
 		private void SelectFilter(Settings settings)
 		{
-			if (settings.SelectedFilter != string.Empty)
+			if (string.IsNullOrWhiteSpace(settings.SelectedFilter))
 			{
-				for (int i = 0; i < cboFilter.Items.Count; i++)
+				return;
+			}
+
+			for (int i = 0; i < cboFilter.Items.Count; i++)
+			{
+				string name = cboFilter.GetItemText(cboFilter.Items[i]);
+				if (string.IsNullOrWhiteSpace(name) || (name != settings.SelectedFilter))
 				{
-					string name = cboFilter.GetItemText(cboFilter.Items[i]);
-					if (name == settings.SelectedFilter)
-					{
-						mchkAdvancedCategories.Checked = true;
-						cboFilter.SelectedIndex = i;
-						cboFilter.Text = name;
-						ApplyFilter((Filter) cboFilter.SelectedItem);
-					}
+					continue;
 				}
+
+				mchkAdvancedCategories.Checked = true;
+				cboFilter.SelectedIndex = i;
+				cboFilter.Text = name;
+
+				if (!(cboFilter.SelectedItem is Filter filter))
+				{
+					return;
+				}
+
+				ApplyFilter(filter);
 			}
 		}
 
@@ -4071,21 +4102,24 @@ namespace Depressurizer
 			}
 		}
 
-		private void SetItemState(ListViewItem i, int state)
+		private void SetItemState(ListViewItem listViewItem, int state)
 		{
-			i.StateImageIndex = state;
+			if (!(listViewItem.Tag is Category category))
+			{
+				return;
+			}
 
-			Category c = i.Tag as Category;
+			listViewItem.StateImageIndex = state;
 
-			if (i.Tag.ToString() == GlobalStrings.MainForm_Uncategorized)
+			if (listViewItem.Tag.ToString() == GlobalStrings.MainForm_Uncategorized)
 			{
 				_advancedFilter.Uncategorized = state;
 			}
-			else if (i.Tag.ToString() == GlobalStrings.MainForm_Hidden)
+			else if (listViewItem.Tag.ToString() == GlobalStrings.MainForm_Hidden)
 			{
 				_advancedFilter.Hidden = state;
 			}
-			else if (i.Tag.ToString() == GlobalStrings.MainForm_VR)
+			else if (listViewItem.Tag.ToString() == GlobalStrings.MainForm_VR)
 			{
 				_advancedFilter.VR = state;
 			}
@@ -4094,25 +4128,27 @@ namespace Depressurizer
 				switch ((AdvancedFilterState) state)
 				{
 					case AdvancedFilterState.Allow:
-						_advancedFilter.Allow.Add(c);
-						_advancedFilter.Require.Remove(c);
-						_advancedFilter.Exclude.Remove(c);
+						_advancedFilter.Allow.Add(category);
+						_advancedFilter.Require.Remove(category);
+						_advancedFilter.Exclude.Remove(category);
 						break;
 					case AdvancedFilterState.Require:
-						_advancedFilter.Allow.Remove(c);
-						_advancedFilter.Require.Add(c);
-						_advancedFilter.Exclude.Remove(c);
+						_advancedFilter.Allow.Remove(category);
+						_advancedFilter.Require.Add(category);
+						_advancedFilter.Exclude.Remove(category);
 						break;
 					case AdvancedFilterState.Exclude:
-						_advancedFilter.Allow.Remove(c);
-						_advancedFilter.Require.Remove(c);
-						_advancedFilter.Exclude.Add(c);
+						_advancedFilter.Allow.Remove(category);
+						_advancedFilter.Require.Remove(category);
+						_advancedFilter.Exclude.Add(category);
 						break;
 					case AdvancedFilterState.None:
-						_advancedFilter.Allow.Remove(c);
-						_advancedFilter.Require.Remove(c);
-						_advancedFilter.Exclude.Remove(c);
+						_advancedFilter.Allow.Remove(category);
+						_advancedFilter.Require.Remove(category);
+						_advancedFilter.Exclude.Remove(category);
 						break;
+					default:
+						throw new ArgumentOutOfRangeException(nameof(state), state, null);
 				}
 			}
 		}
