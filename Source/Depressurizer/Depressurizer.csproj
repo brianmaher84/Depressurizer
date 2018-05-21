@@ -195,18 +195,24 @@
     <Compile Include="AutoCat\AutoCatUserScore.cs" />
     <Compile Include="AutoCat\AutoCatGroup.cs" />
     <Compile Include="AutoCat\AutoCatYear.cs" />
-    <Compile Include="AutoCat\CDlgCurator.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CDlgHltb.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Database.cs" />
     <Compile Include="Dialogs\CancelableDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\CancelableDialog.Designer.cs">
       <DependentUpon>CancelableDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FetchDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\GetCuratorRecommendationsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\GetSteamIDDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\HLTBDialog.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\ScrapeDialog.cs">
       <SubType>Form</SubType>
@@ -216,6 +222,9 @@
     </Compile>
     <Compile Include="Dialogs\SteamPathDialog.Designer.cs">
       <DependentUpon>SteamPathDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\UpdateProfileDialog.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Dialogs\WarnDialog.cs">
       <SubType>Form</SubType>
@@ -297,9 +306,6 @@
     <Compile Include="DBEdit\DBEditDlg.Designer.cs">
       <DependentUpon>DBEditDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="DBEdit\CDlgFetch.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="DBEdit\DlgGameDBEntry.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -312,9 +318,6 @@
     <Compile Include="DlgManualDownload.Designer.cs">
       <DependentUpon>DlgManualDownload.cs</DependentUpon>
     </Compile>
-    <Compile Include="CDlgGetSteamID.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="GlobalStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -325,12 +328,6 @@
     </Compile>
     <Compile Include="DlgGame.Designer.cs">
       <DependentUpon>DlgGame.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Lib\CancelableDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Lib\CancelableDlg.Designer.cs">
-      <DependentUpon>CancelableDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Lib\MultiColumnListViewComparer.cs" />
     <Compile Include="Lib\XmlUtil.cs" />
@@ -372,9 +369,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Constants.resx</DependentUpon>
-    </Compile>
-    <Compile Include="CDlgUpdateProfile.cs">
-      <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="AutoCat\AutoCatConfigPanel_Curator.resx">
       <DependentUpon>AutoCatConfigPanel_Curator.cs</DependentUpon>
@@ -566,20 +560,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalStrings.ru.resx" />
     <EmbeddedResource Include="GlobalStrings.uk.resx" />
-    <EmbeddedResource Include="Lib\CancelableDlg.es.resx">
-      <DependentUpon>CancelableDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Lib\CancelableDlg.resx">
-      <DependentUpon>CancelableDlg.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="DlgProfile.resx">
       <DependentUpon>DlgProfile.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Lib\CancelableDlg.ru.resx">
-      <DependentUpon>CancelableDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Lib\CancelableDlg.uk.resx">
-      <DependentUpon>CancelableDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Lib\DlgFatalError.es.resx">
       <DependentUpon>DlgFatalError.cs</DependentUpon>

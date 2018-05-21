@@ -627,7 +627,7 @@ namespace Depressurizer
 							AddStatus(string.Format(GlobalStrings.MainForm_UpdatedDatabaseEntries, dialog.CompletedJobs));
 							if ((dialog.CompletedJobs > 0) && Settings.Instance.AutoSaveDatabase)
 							{
-								SaveGameDB();
+								SaveDatabase();
 							}
 						}
 					}
@@ -3874,10 +3874,7 @@ namespace Depressurizer
 			}
 		}
 
-		/// <summary>
-		///     Saves the current database to disk. Displays a message box on failure.
-		/// </summary>
-		private void SaveGameDB()
+		private void SaveDatabase()
 		{
 			try
 			{
@@ -4352,7 +4349,7 @@ namespace Depressurizer
 				AddStatus(string.Format(GlobalStrings.MainForm_Status_AppInfoAutoupdate, num));
 				if ((num > 0) && Settings.Instance.AutoSaveDatabase)
 				{
-					SaveGameDB();
+					SaveDatabase();
 				}
 			}
 			catch (Exception e)
@@ -4370,27 +4367,29 @@ namespace Depressurizer
 		{
 			Cursor = Cursors.WaitCursor;
 
-			HltbPrcDlg dlg = new HltbPrcDlg();
-			DialogResult res = dlg.ShowDialog();
+			using (HLTBDialog dialog = new HLTBDialog())
+			{
+				DialogResult result = dialog.ShowDialog();
 
-			if (dlg.Error != null)
-			{
-				Program.Logger.Error(GlobalStrings.DBEditDlg_Log_ExceptionHltb, dlg.Error.Message);
-				MessageBox.Show(string.Format(GlobalStrings.MainForm_Msg_ErrorHltb, dlg.Error.Message), GlobalStrings.Gen_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				AddStatus(GlobalStrings.DBEditDlg_ErrorUpdatingHltb);
-			}
-			else
-			{
-				if ((res == DialogResult.Cancel) || (res == DialogResult.Abort))
+				if (dialog.Error != null)
 				{
-					AddStatus(GlobalStrings.DBEditDlg_CanceledHltbUpdate);
+					Program.Logger.Error(GlobalStrings.DBEditDlg_Log_ExceptionHltb, dialog.Error.Message);
+					MessageBox.Show(string.Format(GlobalStrings.MainForm_Msg_ErrorHltb, dialog.Error.Message), GlobalStrings.Gen_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					AddStatus(GlobalStrings.DBEditDlg_ErrorUpdatingHltb);
 				}
 				else
 				{
-					AddStatus(string.Format(GlobalStrings.MainForm_Status_HltbAutoupdate, dlg.Updated));
-					if ((dlg.Updated > 0) && Settings.Instance.AutoSaveDatabase)
+					if ((result == DialogResult.Cancel) || (result == DialogResult.Abort))
 					{
-						SaveGameDB();
+						AddStatus(GlobalStrings.DBEditDlg_CanceledHltbUpdate);
+					}
+					else
+					{
+						AddStatus(string.Format(GlobalStrings.MainForm_Status_HltbAutoupdate, dialog.Updated));
+						if ((dialog.Updated > 0) && Settings.Instance.AutoSaveDatabase)
+						{
+							SaveDatabase();
+						}
 					}
 				}
 			}
@@ -4457,38 +4456,40 @@ namespace Depressurizer
 			{
 				try
 				{
-					CDlgUpdateProfile updateDlg = new CDlgUpdateProfile(CurrentProfile.GameData, CurrentProfile.SteamID64, CurrentProfile.OverwriteOnDownload, CurrentProfile.IgnoreList);
-					DialogResult res = updateDlg.ShowDialog();
+					using (UpdateProfileDialog dialog = new UpdateProfileDialog(CurrentProfile.GameData, CurrentProfile.SteamID64, CurrentProfile.OverwriteOnDownload, CurrentProfile.IgnoreList))
+					{
+						DialogResult result = dialog.ShowDialog();
 
-					if (updateDlg.Error != null)
-					{
-						Program.Logger.Exception(GlobalStrings.MainForm_Log_ExceptionWebUpdateDialog, updateDlg.Error);
-						AddStatus(string.Format(GlobalStrings.MainForm_ErrorDownloadingProfileData, updateDlg.UseHtml ? "HTML" : "XML"));
-						MessageBox.Show(string.Format(GlobalStrings.MainForm_ErrorDowloadingProfile, updateDlg.Error.Message), GlobalStrings.DBEditDlg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
-					else
-					{
-						if ((res == DialogResult.Abort) || (res == DialogResult.Cancel))
+						if (dialog.Error != null)
 						{
-							AddStatus(GlobalStrings.MainForm_DownloadAborted);
+							Program.Logger.Exception(GlobalStrings.MainForm_Log_ExceptionWebUpdateDialog, dialog.Error);
+							AddStatus(string.Format(GlobalStrings.MainForm_ErrorDownloadingProfileData, dialog.UseHtml ? "HTML" : "XML"));
+							MessageBox.Show(string.Format(GlobalStrings.MainForm_ErrorDowloadingProfile, dialog.Error.Message), GlobalStrings.DBEditDlg_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
 						}
 						else
 						{
-							if (updateDlg.Failover)
+							if ((result == DialogResult.Abort) || (result == DialogResult.Cancel))
 							{
-								AddStatus(GlobalStrings.MainForm_XMLDownloadFailed);
-							}
-
-							if (updateDlg.Fetched == 0)
-							{
-								MessageBox.Show(GlobalStrings.MainForm_NoGameDataFound, GlobalStrings.Gen_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-								AddStatus(GlobalStrings.MainForm_NoGamesInDownload);
+								AddStatus(GlobalStrings.MainForm_DownloadAborted);
 							}
 							else
 							{
-								MakeChange(true);
-								AddStatus(string.Format(GlobalStrings.MainForm_DownloadedGames, updateDlg.Fetched, updateDlg.Added, updateDlg.UseHtml ? "HTML" : "XML"));
-								FullListRefresh();
+								if (dialog.Failover)
+								{
+									AddStatus(GlobalStrings.MainForm_XMLDownloadFailed);
+								}
+
+								if (dialog.Fetched == 0)
+								{
+									MessageBox.Show(GlobalStrings.MainForm_NoGameDataFound, GlobalStrings.Gen_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+									AddStatus(GlobalStrings.MainForm_NoGamesInDownload);
+								}
+								else
+								{
+									MakeChange(true);
+									AddStatus(string.Format(GlobalStrings.MainForm_DownloadedGames, dialog.Fetched, dialog.Added, dialog.UseHtml ? "HTML" : "XML"));
+									FullListRefresh();
+								}
 							}
 						}
 					}

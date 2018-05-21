@@ -214,7 +214,7 @@ namespace Depressurizer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to http://store.steampowered.com/curators/ajaxgetcuratorrecommendations/{0}/?query=&amp;start={1}&amp;count=50.
+        ///   Looks up a localized string similar to .
         /// </summary>
         internal static string UrlSteamCuratorRecommendations {
             get {

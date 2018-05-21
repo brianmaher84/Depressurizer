@@ -142,6 +142,30 @@
   <data name="Depressurizer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Depressurizer.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="FetchDialog_Finished" xml:space="preserve">
+    <value>Finished downloading...</value>
+  </data>
+  <data name="FetchDialog_Status" xml:space="preserve">
+    <value>Downloading app list...</value>
+  </data>
+  <data name="FetchDialog_Title" xml:space="preserve">
+    <value>Updating app list</value>
+  </data>
+  <data name="GetSteamIDDialog_Error" xml:space="preserve">
+    <value>Failed to download profile data:</value>
+  </data>
+  <data name="GetSteamIDDialog_Status" xml:space="preserve">
+    <value>Getting Steam ID from Custom URL...</value>
+  </data>
+  <data name="GetSteamIDDialog_Title" xml:space="preserve">
+    <value>Getting Steam ID...</value>
+  </data>
+  <data name="HLTBDialog_Status" xml:space="preserve">
+    <value>Updating HowLongToBeat times...</value>
+  </data>
+  <data name="HLTBDialog_Title" xml:space="preserve">
+    <value>Updating HLTB times</value>
+  </data>
   <data name="ScrapeDialog_ApplyingData" xml:space="preserve">
     <value>Applying Data...</value>
   </data>

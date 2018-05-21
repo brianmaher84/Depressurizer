@@ -134,6 +134,78 @@ namespace Depressurizer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Finished downloading....
+        /// </summary>
+        internal static string FetchDialog_Finished {
+            get {
+                return ResourceManager.GetString("FetchDialog_Finished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Downloading app list....
+        /// </summary>
+        internal static string FetchDialog_Status {
+            get {
+                return ResourceManager.GetString("FetchDialog_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updating app list.
+        /// </summary>
+        internal static string FetchDialog_Title {
+            get {
+                return ResourceManager.GetString("FetchDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to download profile data:.
+        /// </summary>
+        internal static string GetSteamIDDialog_Error {
+            get {
+                return ResourceManager.GetString("GetSteamIDDialog_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Getting Steam ID from Custom URL....
+        /// </summary>
+        internal static string GetSteamIDDialog_Status {
+            get {
+                return ResourceManager.GetString("GetSteamIDDialog_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Getting Steam ID....
+        /// </summary>
+        internal static string GetSteamIDDialog_Title {
+            get {
+                return ResourceManager.GetString("GetSteamIDDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updating HowLongToBeat times....
+        /// </summary>
+        internal static string HLTBDialog_Status {
+            get {
+                return ResourceManager.GetString("HLTBDialog_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updating HLTB times.
+        /// </summary>
+        internal static string HLTBDialog_Title {
+            get {
+                return ResourceManager.GetString("HLTBDialog_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Applying Data....
         /// </summary>
         internal static string ScrapeDialog_ApplyingData {

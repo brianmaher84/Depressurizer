@@ -1,6 +1,6 @@
 ﻿#region License
 
-//     This file (CDlgUpdateProfile.cs) is part of Depressurizer.
+//     This file (UpdateProfileDialog.cs) is part of Depressurizer.
 //     Copyright (C) 2018  Martijn Vegter
 // 
 //     This program is free software: you can redistribute it and/or modify
@@ -25,64 +25,67 @@ using System.Collections.Generic;
 using System.Xml;
 using Depressurizer.Core;
 using Depressurizer.Core.Enums;
-using Rallion;
 
 #endregion
 
-namespace Depressurizer
+namespace Depressurizer.Dialogs
 {
-	internal class CDlgUpdateProfile : CancelableDlg
+	internal class UpdateProfileDialog : CancelableDialog
 	{
 		#region Fields
 
-		private readonly bool custom;
-		private readonly string customUrl;
-		private readonly GameList data;
+		private readonly bool _custom;
 
-		private XmlDocument doc;
-		private string htmlDoc;
-		private readonly SortedSet<int> ignore;
+		private readonly string _customUrl;
 
-		private readonly bool overwrite;
+		private readonly GameList _data;
 
-		private readonly long SteamId;
+		private readonly SortedSet<int> _ignore;
+
+		private readonly bool _overwrite;
+
+		private readonly long _steamId;
+
+		private XmlDocument _document;
+
+		private string _htmlDoc;
 
 		#endregion
 
 		#region Constructors and Destructors
 
-		public CDlgUpdateProfile(GameList data, long accountId, bool overwrite, SortedSet<int> ignore) : base(GlobalStrings.CDlgUpdateProfile_UpdatingGameList, true)
+		public UpdateProfileDialog(GameList data, long accountId, bool overwrite, SortedSet<int> ignore) : base(GlobalStrings.CDlgUpdateProfile_UpdatingGameList, true)
 		{
-			custom = false;
-			SteamId = accountId;
+			_custom = false;
+			_steamId = accountId;
 
 			Added = 0;
 			Fetched = 0;
 			UseHtml = false;
 			Failover = false;
 
-			this.data = data;
+			_data = data;
 
-			this.overwrite = overwrite;
-			this.ignore = ignore;
+			_overwrite = overwrite;
+			_ignore = ignore;
 
 			SetText(GlobalStrings.CDlgFetch_DownloadingGameList);
 		}
 
-		public CDlgUpdateProfile(GameList data, string customUrl, bool overwrite, SortedSet<int> ignore) : base(GlobalStrings.CDlgUpdateProfile_UpdatingGameList, true)
+		public UpdateProfileDialog(GameList data, string customUrl, bool overwrite, SortedSet<int> ignore) : base(GlobalStrings.CDlgUpdateProfile_UpdatingGameList, true)
 		{
-			custom = true;
-			this.customUrl = customUrl;
+			_custom = true;
+			_customUrl = customUrl;
 
 			Added = 0;
 			Fetched = 0;
 			UseHtml = false;
 			Failover = false;
 
-			this.data = data;
+			_data = data;
 
-			this.overwrite = overwrite;
-			this.ignore = ignore;
+			_overwrite = overwrite;
+			_ignore = ignore;
 
 			SetText(GlobalStrings.CDlgFetch_DownloadingGameList);
 		}
@@ -92,8 +95,11 @@ namespace Depressurizer
 		#region Public Properties
 
 		public int Added { get; private set; }
+
 		public bool Failover { get; private set; }
+
 		public int Fetched { get; private set; }
+
 		public int Removed { get; private set; }
 
 		public bool UseHtml { get; private set; }
@@ -105,17 +111,19 @@ namespace Depressurizer
 		protected void FetchHtml()
 		{
 			UseHtml = true;
-			htmlDoc = custom ? GameList.FetchHtmlGameList(customUrl) : GameList.FetchHtmlGameList(SteamId);
+			_htmlDoc = _custom ? GameList.FetchHtmlGameList(_customUrl) : GameList.FetchHtmlGameList(_steamId);
 		}
 
 		protected void FetchXml()
 		{
 			UseHtml = false;
-			doc = custom ? GameList.FetchXmlGameList(customUrl) : GameList.FetchXmlGameList(SteamId);
+			_document = _custom ? GameList.FetchXmlGameList(_customUrl) : GameList.FetchXmlGameList(_steamId);
 		}
 
 		protected void FetchXmlPref()
 		{
+
+
 			try
 			{
 				FetchXml();
@@ -129,7 +137,12 @@ namespace Depressurizer
 
 		protected override void Finish()
 		{
-			if (Canceled || Error != null || (UseHtml ? htmlDoc == null : doc == null))
+			if (Canceled || (Error != null))
+			{
+				return;
+			}
+
+			if (UseHtml ? _htmlDoc == null : _document == null)
 			{
 				return;
 			}
@@ -137,22 +150,23 @@ namespace Depressurizer
 			SetText(GlobalStrings.CDlgFetch_FinishingDownload);
 			if (UseHtml)
 			{
-				Fetched = data.IntegrateHtmlGameList(htmlDoc, overwrite, ignore, out int newItems);
+				Fetched = _data.IntegrateHtmlGameList(_htmlDoc, _overwrite, _ignore, out int newItems);
 				Added = newItems;
 			}
 			else
 			{
-				Fetched = data.IntegrateXmlGameList(doc, overwrite, ignore, out int newItems);
+				Fetched = _data.IntegrateXmlGameList(_document, _overwrite, _ignore, out int newItems);
 				Added = newItems;
 			}
 
 			OnJobCompletion();
 		}
 
-		protected override void RunProcess()
+		protected override void Start()
 		{
 			Added = 0;
 			Fetched = 0;
+
 			switch (Settings.Instance.ListSource)
 			{
 				case GameListSource.XmlPreferred:
@@ -164,9 +178,11 @@ namespace Depressurizer
 				case GameListSource.WebsiteOnly:
 					FetchHtml();
 					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 
-			OnThreadCompletion();
+			OnJobCompletion();
 		}
 
 		#endregion

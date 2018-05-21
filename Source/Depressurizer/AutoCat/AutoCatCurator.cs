@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using Depressurizer.Core.Enums;
 using Depressurizer.Core.Models;
+using Depressurizer.Dialogs;
 
 namespace Depressurizer
 {
@@ -103,20 +104,21 @@ namespace Depressurizer
                 return;
             }
 
-            GetCuratorRecommendationsDlg dlg = new GetCuratorRecommendationsDlg(curatorId);
-            DialogResult res = dlg.ShowDialog();
+	        using (GetCuratorRecommendationsDialog dialog = new GetCuratorRecommendationsDialog(curatorId))
+	        {
+		        DialogResult result = dialog.ShowDialog();
 
-            if (dlg.Error != null)
-            {
-                Program.Logger.Error(GlobalStrings.AutocatCurator_GetRecommendations_Error, dlg.Error.Message);
-                MessageBox.Show(string.Format(GlobalStrings.AutocatCurator_GetRecommendations_Error, dlg.Error.Message),
-                    GlobalStrings.Gen_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            else if ((res != DialogResult.Cancel) && (res != DialogResult.Abort))
-            {
+		        if (dialog.Error != null)
+		        {
+			        Program.Logger.Error(GlobalStrings.AutocatCurator_GetRecommendations_Error, dialog.Error.Message);
+			        MessageBox.Show(string.Format(GlobalStrings.AutocatCurator_GetRecommendations_Error, dialog.Error.Message), GlobalStrings.Gen_Warning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+		        }
+		        else if ((result != DialogResult.Cancel) && (result != DialogResult.Abort))
+		        {
 
-                curatorRecommendations = dlg.CuratorRecommendations;
-            }
+			        curatorRecommendations = dialog.CuratorRecommendations;
+		        }
+	        }
         }
 
         public override AutoCatResult CategorizeGame(GameInfo game, Filter filter)
